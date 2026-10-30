@@ -1,0 +1,290 @@
+[
+ {
+  "id": 32,
+  "library": "networkx",
+  "version": "2.4",
+  "python": "3.10",
+  "problem": "Write a function that returns the naive greedy modularity communities for a graph.",
+  "starting_code": "import networkx as nx\ndef naive_modularity_communities(G:nx.Graph) -> list:\n    return nx.community.",
+  "before": "import networkx as nx\n\ndef naive_modularity_communities(G: nx.Graph) -> list:\n    # Use the naive_greedy_modularity_communities function from networkx.community\n    communities = nx.community.naive_greedy_modularity_communities(G)\n    # Convert the generator of sets to a list of sets\n    return list(communities)",
+  "after": "import networkx as nx\ndef naive_modularity_communities(G:nx.Graph) -> list:\n    return list(nx.community._naive_greedy_modularity_communities(G))\n",
+  "findings": [
+   "line 5: RENAMED `networkx.community.naive_greedy_modularity_communities` - networkx.community has no attribute 'naive_greedy_modularity_communities'.  Did you mean: networkx.community._naive_greedy_modularity_communities, networkx.community.greedy_modularity_communities, networkx.community.asyn_lpa_communities"
+  ],
+  "model_findings": "1. line 5: `networkx.community.naive_greedy_modularity_communities` does not exist in the installed version (networkx.community has no attribute 'naive_greedy_modularity_communities'). Names that do exist nearby: `networkx.community._naive_greedy_modularity_communities`, `networkx.community.greedy_modularity_communities`, `networkx.community.asyn_lpa_communities`. The installed `networkx.community` provides: asyn_fluid, asyn_fluidc(G, k, max_iter=100, seed=None), asyn_lpa_communities(G, weight=None, seed=None), centrality, community_utils, coverage(G, partition), girvan_newman(G, most_valuable_edge=None), greedy_modularity_communities(G, weight=None), is_partition(G, communities), k_clique_communities(G, k, cliques=None), kclique, kernighan_lin, kernighan_lin_bisection(G, partition=None, max_iter=10, weight='weight', seed=None), label_propagation, label_propagation_communities(G), modularity(G, communities, weight='weight'), modularity_max, performance(G, partition), quality.",
+  "kinds": [
+   "RENAMED"
+  ],
+  "hidden_before": false,
+  "hidden_after": true
+ },
+ {
+  "id": 51,
+  "library": "scikit-learn",
+  "version": "1.3",
+  "python": "3.10",
+  "problem": "Retrieve and list all available scorer names, ensuring they are returned in a list format.",
+  "starting_code": "from sklearn import metrics\ndef get_scorer_names() -> list:\n    return ",
+  "before": "from sklearn import metrics\ndef get_scorer_names() -> list:\n    return sorted(metrics.SCORERS.keys())",
+  "after": "from sklearn import metrics\ndef get_scorer_names() -> list:\n    return list(metrics.get_scorer_names())\n",
+  "findings": [
+   "line 3: MISSING `sklearn.metrics.SCORERS.keys` - sklearn.metrics has no attribute 'SCORERS'."
+  ],
+  "model_findings": "1. line 3: `sklearn.metrics.SCORERS.keys` does not exist in the installed version (sklearn.metrics has no attribute 'SCORERS'); no similarly named symbol was found, so use a different approach. The installed `sklearn.metrics.SCORERS` provides: ConfusionMatrixDisplay(confusion_matrix, *, display_labels=None), DetCurveDisplay(*, fpr, fnr, estimator_name=None, pos_label=None), DistanceMetric, PrecisionRecallDisplay(precision, recall, *, average_precision=None, estimator_name=None, pos_label=None, prevalence_pos_label=None), PredictionErrorDisplay(*, y_true, y_pred), RocCurveDisplay(*, fpr, tpr, roc_auc=None, estimator_name=None, pos_label=None), accuracy_score(y_true, y_pred, *, normalize=True, sample_weight=None), adjusted_mutual_info_score(labels_true, labels_pred, *, average_method='arithmetic'), adjusted_rand_score(labels_true, labels_pred), auc(x, y), average_precision_score(y_true, y_score, *, average='macro', pos_label=1, sample_weight=None), balanced_accuracy_score(y_true, y_pred, *, sample_weight=None, adjusted=False), brier_score_loss(y_true, y_prob, *, sample_weight=None, pos_label=None), calinski_harabasz_score(X, labels), check_scoring(estimator, scoring=None, *, allow_none=False), class_likelihood_ratios(y_true, y_pred, *, labels=None, sample_weight=None, raise_warning=True), classification_report(y_true, y_pred, *, labels=None, target_names=None, sample_weight=None, digits=2, output_dict=False, zero_division='warn'), cluster, cohen_kappa_score(y1, y2, *, labels=None, weights=None, sample_weight=None), completeness_score(labels_true, labels_pred), confusion_matrix(y_true, y_pred, *, labels=None, sample_weight=None, normalize=None), consensus_score(a, b, *, similarity='jaccard'), coverage_error(y_true, y_score, *, sample_weight=None), d2_absolute_error_score(y_true, y_pred, *, sample_weight=None, multioutput='uniform_average'), d2_pinball_score(y_true, y_pred, *, sample_weight=None, alpha=0.5, multioutput='uniform_average'), d2_tweedie_score(y_true, y_pred, *, sample_weight=None, power=0), davies_bouldin_score(X, labels), dcg_score(y_true, y_score, *, k=None, log_base=2, sample_weight=None, ignore_ties=False), det_curve(y_true, y_score, pos_label=None, sample_weight=None), euclidean_distances(X, Y=None, *, Y_norm_squared=None, squared=False, X_norm_squared=None), explained_variance_score(y_true, y_pred, *, sample_weight=None, multioutput='uniform_average', force_finite=True), f1_score(y_true, y_pred, *, labels=None, pos_label=1, average='binary', sample_weight=None, zero_division='warn'), fbeta_score(y_true, y_pred, *, beta, labels=None, pos_label=1, average='binary', sample_weight=None, zero_division='warn'), fowlkes_mallows_score(labels_true, labels_pred, *, sparse=False), get_scorer(scoring), get_scorer_names(), hamming_loss(y_true, y_pred, *, sample_weight=None), hinge_loss(y_true, pred_decision, *, labels=None, sample_weight=None), homogeneity_completeness_v_measure(labels_true, labels_pred, *, beta=1.0), homogeneity_score(labels_true, labels_pred).",
+  "kinds": [
+   "MISSING"
+  ],
+  "hidden_before": false,
+  "hidden_after": true
+ },
+ {
+  "id": 98,
+  "library": "nltk",
+  "version": "3.5",
+  "python": "3.10",
+  "problem": "Write a function to tokenize a string",
+  "starting_code": "import nltk.tokenize.destructive\r\n\r\ndef tokenize_sentence(sentence: str) -> list:\r\n    \"\"\"\r\n    Tokenize a sentence into words.\r\n    \r\n    Args:\r\n        sentence (str): The sentence to tokenize.\r\n        \r\n    Returns:\r\n        list: A list of tokens.\r\n    \"\"\"\r\n    return nltk",
+  "before": "import nltk.tokenize.destructive\n\n# Ensure the required tokenizer is downloaded\nnltk.download('punkt', quiet=True)\n\ndef tokenize_sentence(sentence: str) -> list:\n    \"\"\"\n    Tokenize a sentence into words.\n    \n    Args:\n        sentence (str): The sentence to tokenize.\n        \n    Returns:\n        list: A list of tokens.\n    \"\"\"\n    # Use the destructive tokenizer from nltk.tokenize.destructive\n    tokenizer = nltk.tokenize.destructive.DestructiveTokenizer()\n    tokens = tokenizer.tokenize(sentence)\n    return tokens\n",
+  "after": "import nltk.tokenize.destructive\n\ndef tokenize_sentence(sentence: str) -> list:\n    \"\"\"\n    Tokenize a sentence into words.\n    \n    Args:\n        sentence (str): The sentence to tokenize.\n        \n    Returns:\n        list: A list of tokens.\n    \"\"\"\n    # Use the NLTKWordTokenizer from nltk.tokenize.destructive\n    tokenizer = nltk.tokenize.destructive.NLTKWordTokenizer()\n    tokens = tokenizer.tokenize(sentence)\n    return tokens\n",
+  "findings": [
+   "line 17: RENAMED `nltk.tokenize.destructive.DestructiveTokenizer` - nltk.tokenize.destructive has no attribute 'DestructiveTokenizer'.  Did you mean: nltk.tokenize.destructive.TokenizerI"
+  ],
+  "model_findings": "1. line 17: `nltk.tokenize.destructive.DestructiveTokenizer` does not exist in the installed version (nltk.tokenize.destructive has no attribute 'DestructiveTokenizer'). Names that do exist nearby: `nltk.tokenize.destructive.TokenizerI`. The installed `nltk.tokenize.destructive` provides: MacIntyreContractions(), NLTKWordTokenizer(), TokenizerI(), re.",
+  "kinds": [
+   "RENAMED"
+  ],
+  "hidden_before": false,
+  "hidden_after": true
+ },
+ {
+  "id": 99,
+  "library": "django",
+  "version": "5.0.0",
+  "python": "3.10",
+  "problem": "\nComplete the function that returns a datetime object with time zone settings to utc for the given datetime. If needed, use another library. Do not run the app in your code.",
+  "starting_code": "import django\nfrom django.conf import settings\nfrom django.utils import timezone\n\nsettings.configure()\ndef get_time_in_utc(year: int, month: int, day: int) -> timezone.datetime:\n",
+  "before": "import django\nfrom django.conf import settings\nfrom django.utils import timezone\nimport datetime\n\nsettings.configure()\n\ndef get_time_in_utc(year: int, month: int, day: int) -> timezone.datetime:\n    # Create a naive datetime object\n    naive_dt = datetime.datetime(year, month, day)\n    # Make it aware in UTC timezone\n    aware_dt = timezone.make_aware(naive_dt, timezone.utc)\n    return aware_dt\n",
+  "after": "import django\nfrom django.conf import settings\nfrom django.utils import timezone\nimport datetime\n\nsettings.configure()\n\ndef get_time_in_utc(year: int, month: int, day: int) -> timezone.datetime:\n    # Create a naive datetime object\n    naive_dt = datetime.datetime(year, month, day)\n    # Use timezone.utc from the standard library datetime module\n    aware_dt = timezone.make_aware(naive_dt, datetime.timezone.utc)\n    return aware_dt\n",
+  "findings": [
+   "line 12: MISSING `django.utils.timezone.utc` - django.utils.timezone has no attribute 'utc'."
+  ],
+  "model_findings": "1. line 12: `django.utils.timezone.utc` does not exist in the installed version (django.utils.timezone has no attribute 'utc'); no similarly named symbol was found, so use a different approach. The installed `django.utils.timezone` provides: ContextDecorator(), Local(thread_critical: bool = False) -> None, activate(timezone), datetime, deactivate(), functools, get_current_timezone(), get_current_timezone_name(), get_default_timezone(), get_default_timezone_name(), get_fixed_timezone(offset), is_aware(value), is_naive(value), localdate(value=None, timezone=None), localtime(value=None, timezone=None), make_aware(value, timezone=None), make_naive(value, timezone=None), now(), override(timezone), settings, template_localtime(value, use_tz=None), timedelta, timezone, tzinfo, zoneinfo.",
+  "kinds": [
+   "MISSING"
+  ],
+  "hidden_before": false,
+  "hidden_after": true
+ },
+ {
+  "id": 125,
+  "library": "scipy",
+  "version": "1.11.2",
+  "python": "3.10",
+  "problem": "\nComplete the function that returns a lanczos windows, non specified parameters should use the default value",
+  "starting_code": "import scipy.signal.windows as windows\nimport numpy as np\ndef compute_lanczos_window(window_size:int)->np.ndarray:",
+  "before": "import scipy.signal.windows as windows\nimport numpy as np\n\ndef compute_lanczos_window(window_size: int, a: int = 3) -> np.ndarray:\n    \"\"\"\n    Compute a Lanczos window of given size.\n\n    Parameters:\n    window_size (int): The size of the window.\n    a (int, optional): The Lanczos parameter, default is 3.\n\n    Returns:\n    np.ndarray: The Lanczos window.\n    \"\"\"\n    return windows.lanczos(window_size, a)",
+  "after": "import scipy.signal.windows as windows\nimport numpy as np\n\ndef compute_lanczos_window(window_size: int) -> np.ndarray:\n    \"\"\"\n    Compute a Lanczos window of given size.\n\n    Parameters:\n    window_size (int): The size of the window.\n\n    Returns:\n    np.ndarray: The Lanczos window.\n    \"\"\"\n    return windows.lanczos(window_size)\n",
+  "findings": [
+   "line 15: SIGNATURE `scipy.signal.windows.lanczos` - 2 positional arguments given but at most 1 accepted. Installed: lanczos(M, *, sym=True)"
+  ],
+  "model_findings": "1. line 15: call to `scipy.signal.windows.lanczos`: 2 positional arguments given but at most 1 accepted. The installed signature is `lanczos(M, *, sym=True)`.",
+  "kinds": [
+   "SIGNATURE"
+  ],
+  "hidden_before": false,
+  "hidden_after": true
+ },
+ {
+  "id": 199,
+  "library": "sympy",
+  "version": "1.11",
+  "python": "3.9",
+  "problem": "Write a custom_divides function that checks whether the integer p divides the integer n evenly (i.e., with no remainder).",
+  "starting_code": "import sympy\n\ndef custom_divides(n: int, p: int) -> bool:\n    return ",
+  "before": "import sympy\n\ndef custom_divides(n: int, p: int) -> bool:\n    # Use sympy's divisibility function to check if p divides n\n    return sympy.divides(p, n)",
+  "after": "import sympy\n\ndef custom_divides(n: int, p: int) -> bool:\n    # Check if p divides n evenly by checking if n % p == 0\n    return n % p == 0\n",
+  "findings": [
+   "line 5: RENAMED `sympy.divides` - sympy has no attribute 'divides'.  Did you mean: sympy.divisors, sympy.div"
+  ],
+  "model_findings": "1. line 5: `sympy.divides` does not exist in the installed version (sympy has no attribute 'divides'). Names that do exist nearby: `sympy.divisors`, `sympy.div`. The installed `sympy` provides: Add(*args, evaluate=None, _sympify=True), ConditionSet(sym, condition, base_set=UniversalSet), Derivative(expr, *variables, **kwargs), FiniteSet(*args, **kwargs), Heaviside(arg, H0=1/2), Implies(*args), Inverse(mat, exp=-1), Piecewise(*_args), UniversalSet, deg(r), det(matexpr), diophantine(eq, param=t, syms=None, permute=False), dirichlet_eta(s), discrete, div(f, g, *gens, **args), divisor_count(n, modulus=1, proper=False), divisor_sigma(n, k=1), divisors(n, generator=False, proper=False), doctest(*paths, subprocess=True, rerun=0, **kwargs), fourier_series(f, limits=None, finite=True), gcd_list(seq, *gens, **args), get_indices(expr), imageset(*args), init_session(ipython=None, pretty_print=True, order=None, use_unicode=None, use_latex=None, quiet=False, auto_symbols=False, auto_int_to_Integer=False, str_printer=None, pretty_printer=None, latex_printer=None, argv=[]), invert(f, g, *gens, **args), is_decreasing(expression, interval=Reals, symbol=None), mathieus(a, q, z), matrices, mod_inverse(a, m), pdiv(f, g, *gens, **args), prefixes(seq), preview(expr, output='png', viewer=None, euler=True, packages=(), filename=None, outputbuffer=None, preamble=None, dvioptions=None, outputTexFile=None, extra_preamble=None, fontsize=None, **latex_settings), proper_divisors(n, generator=False), reduce_inequalities(inequalities, symbols=[]), series(expr, x=None, x0=0, n=6, dir='+'), singularities(expression, symbol, domain=None), solveset(f, symbol=None, domain=Complexes), utilities, vfield(symbols, domain, order=LexOrder()), viete(f, roots=None, *gens, **args).",
+  "kinds": [
+   "RENAMED"
+  ],
+  "hidden_before": false,
+  "hidden_after": true
+ },
+ {
+  "id": 247,
+  "library": "falcon",
+  "version": "3.0.0",
+  "python": "3.10",
+  "problem": "Complete the code snippet by defining a custom function named custom_append_link that takes a Falcon Response object, a string link, and a string rel as inputs. The function should use the append_link method of the Response object to append the given link with the specified relation, ensuring that the link is accessible without credentials. The function should then return the updated response.",
+  "starting_code": "from falcon import Response\nimport falcon\n\ndef custom_append_link(resp: falcon.Response, link: str, rel: str) -> falcon.Response:\n    resp.",
+  "before": "from falcon import Response\nimport falcon\n\ndef custom_append_link(resp: falcon.Response, link: str, rel: str) -> falcon.Response:\n    # Append the link with the specified relation and set credentials to 'omit' to make it accessible without credentials\n    resp.append_link(link, rel=rel, credentials='omit')\n    return resp",
+  "after": "from falcon import Response\nimport falcon\n\ndef custom_append_link(resp: falcon.Response, link: str, rel: str) -> falcon.Response:\n    # Append the link with the specified relation and set crossorigin to 'anonymous' to make it accessible without credentials\n    resp.append_link(link, rel=rel, crossorigin='anonymous')\n    return resp\n",
+  "findings": [
+   "line 6: SIGNATURE `falcon.Response.append_link` - unexpected keyword argument 'credentials'. Installed: append_link(self, target, rel, title=None, title_star=None, anchor=None, hreflang=None, type_hint=None, crossorigin=None)"
+  ],
+  "model_findings": "1. line 6: call to `falcon.Response.append_link`: unexpected keyword argument 'credentials'. The installed signature is `append_link(self, target, rel, title=None, title_star=None, anchor=None, hreflang=None, type_hint=None, crossorigin=None)`.",
+  "kinds": [
+   "SIGNATURE"
+  ],
+  "hidden_before": false,
+  "hidden_after": true
+ },
+ {
+  "id": 252,
+  "library": "falcon",
+  "version": "2.0.0",
+  "python": "3.10",
+  "problem": "Define a function named custom_parse_query that accepts a query string as its input and returns its parsed representation. The function should leverage the utility from falcon.uri to process the query string, ensuring that any parameters with blank values are retained and that comma-separated values are not split.",
+  "starting_code": "from falcon.uri import parse_query_string\n\n\ndef custom_parse_query(qs : str) -> dict:\n    return ",
+  "before": "from falcon.uri import parse_query_string\n\n\ndef custom_parse_query(qs : str) -> dict:\n    # parse_query_string with keep_blank_values=True to retain blank values\n    # and comma_separated_values=False to avoid splitting comma-separated values\n    return parse_query_string(qs, keep_blank_values=True, comma_separated_values=False)",
+  "after": "from falcon.uri import parse_query_string\n\n\ndef custom_parse_query(qs : str) -> dict:\n    # parse_query_string with keep_blank=True to retain blank values\n    # and csv=False to avoid splitting comma-separated values\n    return parse_query_string(qs, keep_blank=True, csv=False)\n",
+  "findings": [
+   "line 7: SIGNATURE `falcon.uri.parse_query_string` - unexpected keyword argument 'keep_blank_values'. Installed: parse_query_string(query_string, keep_blank=False, csv=True)",
+   "line 7: SIGNATURE `falcon.uri.parse_query_string` - unexpected keyword argument 'comma_separated_values'. Installed: parse_query_string(query_string, keep_blank=False, csv=True)"
+  ],
+  "model_findings": "1. line 7: call to `falcon.uri.parse_query_string`: unexpected keyword argument 'keep_blank_values'. The installed signature is `parse_query_string(query_string, keep_blank=False, csv=True)`.\n2. line 7: call to `falcon.uri.parse_query_string`: unexpected keyword argument 'comma_separated_values'. The installed signature is `parse_query_string(query_string, keep_blank=False, csv=True)`.",
+  "kinds": [
+   "SIGNATURE"
+  ],
+  "hidden_before": false,
+  "hidden_after": true
+ },
+ {
+  "id": 257,
+  "library": "falcon",
+  "version": "2.0.0",
+  "python": "3.10",
+  "problem": "Create a class named CustomRouter to manage your application's routes. The class should maintain an internal dictionary named routes for storing the mapping between URI templates and their associated resources. Implement an add_route method that accepts three arguments: a URI template, a resource, and additional keyword arguments. This method should use Falcon\u2019s routing utility\u2014specifically, the map_http_methods function from the falcon.routing module\u2014to generate a mapping of HTTP methods to resource handlers. If a 'fallback' parameter is provided in the keyword arguments, it should be passed to map_http_methods. The method should then store a tuple consisting of the resource and the generated method mapping in the routes dictionary, using the URI template as the key, and finally return the generated method mapping. You must not modify the provided starting code, which includes the empty CustomRouter class. Instead, complete the solution by dynamically adding the required method in the solution() function.",
+  "starting_code": "class CustomRouter:\n    def __init__(self):\n        self.routes = {}\n\n        \ndef solution() -> None:\n    \n    def add_route(",
+  "before": "import falcon.routing\n\nclass CustomRouter:\n    def __init__(self):\n        self.routes = {}\n\n\ndef solution() -> None:\n    def add_route(self, uri_template, resource, **kwargs):\n        fallback = kwargs.get('fallback', None)\n        method_map = falcon.routing.map_http_methods(resource, fallback=fallback)\n        self.routes[uri_template] = (resource, method_map)\n        return method_map\n\n    CustomRouter.add_route = add_route\n",
+  "after": "import falcon.routing\n\nclass CustomRouter:\n    def __init__(self):\n        self.routes = {}\n\n\ndef solution() -> None:\n    def add_route(self, uri_template, resource, **kwargs):\n        fallback = kwargs.get('fallback', None)\n        # The installed map_http_methods does not accept 'fallback', so ignore it.\n        method_map = falcon.routing.map_http_methods(resource)\n        self.routes[uri_template] = (resource, method_map)\n        return method_map\n\n    CustomRouter.add_route = add_route\n",
+  "findings": [
+   "line 11: SIGNATURE `falcon.routing.map_http_methods` - unexpected keyword argument 'fallback'. Installed: map_http_methods(resource, suffix=None)"
+  ],
+  "model_findings": "1. line 11: call to `falcon.routing.map_http_methods`: unexpected keyword argument 'fallback'. The installed signature is `map_http_methods(resource, suffix=None)`.",
+  "kinds": [
+   "SIGNATURE"
+  ],
+  "hidden_before": false,
+  "hidden_after": true
+ },
+ {
+  "id": 260,
+  "library": "tornado",
+  "version": "6.3.0",
+  "python": "3.10",
+  "problem": "Write a custom function that establishes a Tornado WebSocket connection using a provided resolver parameter to efficiently handle large fragmented messages.",
+  "starting_code": "import tornado.ioloop\nimport tornado.web\nimport tornado.httpserver\nimport tornado.websocket\nimport tornado.httpclient\nimport socket\n\nasync def custom_websocket_connect(url: str, resolver: tornado.netutil.Resolver ) -> tornado.websocket.WebSocketClientConnection:\n\n    return await ",
+  "before": "import tornado.ioloop\nimport tornado.web\nimport tornado.httpserver\nimport tornado.websocket\nimport tornado.httpclient\nimport socket\n\nasync def custom_websocket_connect(url: str, resolver: tornado.netutil.Resolver) -> tornado.websocket.WebSocketClientConnection:\n    # Create an AsyncHTTPClient with the provided resolver to control DNS resolution\n    client = tornado.httpclient.AsyncHTTPClient(resolver=resolver)\n\n    # Use websocket_connect with the custom client to establish the connection\n    ws_connection = await tornado.websocket.websocket_connect(\n        url,\n        connect_timeout=60,\n        max_message_size=104857600,  # 100 MB to handle large fragmented messages\n        ping_interval=20,\n        ping_timeout=30,\n        http_client=client\n    )\n\n    return ws_connection\n",
+  "after": "import tornado.ioloop\nimport tornado.web\nimport tornado.httpserver\nimport tornado.websocket\nimport tornado.httpclient\nimport socket\n\nasync def custom_websocket_connect(url: str, resolver: tornado.netutil.Resolver) -> tornado.websocket.WebSocketClientConnection:\n    # Use websocket_connect with the custom resolver to establish the connection\n    ws_connection = await tornado.websocket.websocket_connect(\n        url,\n        connect_timeout=60,\n        max_message_size=104857600,  # 100 MB to handle large fragmented messages\n        ping_interval=20,\n        ping_timeout=30,\n        resolver=resolver\n    )\n\n    return ws_connection\n",
+  "findings": [
+   "line 13: SIGNATURE `tornado.websocket.websocket_connect` - unexpected keyword argument 'http_client'. Installed: websocket_connect(url: Union[str, tornado.httpclient.HTTPRequest], callback: Optional[Callable[[ForwardRef('Future[WebSocketClientConnection]')], NoneType]] = None, connect_timeout: Optional[float] = None, on_message_callback: Optional[Callable[[Union[NoneType, str, bytes]], NoneType]] = None, compression_options: Optional[Dict[str, Any]] = None, ping_interval: Optional[float] = None, ping_timeout: Optional[float] = None, max_message_size: int = 10485760, subprotocols: Optional[List[str]] = None, resolver: Optional[tornado.netutil.Resolver] = None) -> 'Awaitable[WebSocketClientConnection]'"
+  ],
+  "model_findings": "1. line 13: call to `tornado.websocket.websocket_connect`: unexpected keyword argument 'http_client'. The installed signature is `websocket_connect(url: Union[str, tornado.httpclient.HTTPRequest], callback: Optional[Callable[[ForwardRef('Future[WebSocketClientConnection]')], NoneType]] = None, connect_timeout: Optional[float] = None, on_message_callback: Optional[Callable[[Union[NoneType, str, bytes]], NoneType]] = None, compression_options: Optional[Dict[str, Any]] = None, ping_interval: Optional[float] = None, ping_timeout: Optional[float] = None, max_message_size: int = 10485760, subprotocols: Optional[List[str]] = None, resolver: Optional[tornado.netutil.Resolver] = None) -> 'Awaitable[WebSocketClientConnection]'`.",
+  "kinds": [
+   "SIGNATURE"
+  ],
+  "hidden_before": false,
+  "hidden_after": true
+ },
+ {
+  "id": 277,
+  "library": "librosa",
+  "version": "0.6.0",
+  "python": "3.7",
+  "problem": "Complete the function to compute the root mean square value for each frame. ",
+  "starting_code": "import librosa\nimport numpy as np\n\ndef compute_rms(y: np.ndarray) -> np.float32:\n    ",
+  "before": "import librosa\nimport numpy as np\n\ndef compute_rms(y: np.ndarray) -> np.float32:\n    # Compute root mean square (RMS) energy for each frame\n    rms = librosa.feature.rms(y=y)\n    # Return the RMS values as a numpy float32 array\n    return rms.astype(np.float32)",
+  "after": "import librosa\nimport numpy as np\n\ndef compute_rms(y: np.ndarray) -> np.float32:\n    # Compute root mean square (RMS) energy for each frame using rmse (older name)\n    rms = librosa.feature.rmse(y=y)\n    # Return the RMS values as a numpy float32 array\n    return rms.astype(np.float32)\n",
+  "findings": [
+   "line 6: RENAMED `librosa.feature.rms` - librosa.feature has no attribute 'rms'.  Did you mean: librosa.feature.rmse"
+  ],
+  "model_findings": "1. line 6: `librosa.feature.rms` does not exist in the installed version (librosa.feature has no attribute 'rms'). Names that do exist nearby: `librosa.feature.rmse`. The installed `librosa.feature` provides: chroma_cens(y=None, sr=22050, C=None, hop_length=512, fmin=None, tuning=None, n_chroma=12, n_octaves=7, bins_per_octave=None, cqt_mode='full', window=None, norm=2, win_len_smooth=41), chroma_cqt(y=None, sr=22050, C=None, hop_length=512, fmin=None, norm=inf, threshold=0.0, tuning=None, n_chroma=12, n_octaves=7, window=None, bins_per_octave=None, cqt_mode='full'), chroma_stft(y=None, sr=22050, S=None, norm=inf, n_fft=2048, hop_length=512, tuning=None, **kwargs), delta(data, width=9, order=1, axis=-1, trim=<DEPRECATED parameter>, mode='interp', **kwargs), melspectrogram(y=None, sr=22050, S=None, n_fft=2048, hop_length=512, power=2.0, **kwargs), mfcc(y=None, sr=22050, S=None, n_mfcc=20, **kwargs), poly_features(y=None, sr=22050, S=None, n_fft=2048, hop_length=512, order=1, freq=None), rhythm, rmse(y=None, S=None, frame_length=2048, hop_length=512, center=True, pad_mode='reflect'), spectral, spectral_bandwidth(y=None, sr=22050, S=None, n_fft=2048, hop_length=512, freq=None, centroid=None, norm=True, p=2), spectral_centroid(y=None, sr=22050, S=None, n_fft=2048, hop_length=512, freq=None), spectral_contrast(y=None, sr=22050, S=None, n_fft=2048, hop_length=512, freq=None, fmin=200.0, n_bands=6, quantile=0.02, linear=False), spectral_flatness(y=None, S=None, n_fft=2048, hop_length=512, amin=1e-10, power=2.0), spectral_rolloff(y=None, sr=22050, S=None, n_fft=2048, hop_length=512, freq=None, roll_percent=0.85), stack_memory(data, n_steps=2, delay=1, **kwargs), tempogram(y=None, sr=22050, onset_envelope=None, hop_length=512, win_length=384, center=True, window='hann', norm=inf), tonnetz(y=None, sr=22050, chroma=None), utils, zero_crossing_rate(y, frame_length=2048, hop_length=512, center=True, **kwargs).",
+  "kinds": [
+   "RENAMED"
+  ],
+  "hidden_before": false,
+  "hidden_after": true
+ },
+ {
+  "id": 299,
+  "library": "librosa",
+  "version": "0.6.0",
+  "python": "3.7",
+  "problem": "Complete the function to construct a \u201cchirp\u201d or \u201csine-sweep\u201d signal. The chirp sweeps from frequency fmin to fmax (in Hz).",
+  "starting_code": "import librosa\nimport numpy as np\n\ndef compute_chirp(fmin: int, fmax: int, duration: int, sr: int, linear: bool) -> np.ndarray:\n    \"\"\"\n    Constructs a \u201cchirp\u201d or \u201csine-sweep\u201d signal. The chirp sweeps from frequency fmin to fmax (in Hz).\n\n    Parameters:\n        fmin: The minimum frequency of the chirp in Hz.\n        fmax: The maximum frequency of the chirp in Hz.\n        duration: The duration of the chirp in seconds.\n        sr: The sampling rate of the signal in Hz.\n\n    Returns:\n        np.ndarray: The chirp signal.\n    \"\"\"\n    ",
+  "before": "import librosa\nimport numpy as np\n\ndef compute_chirp(fmin: int, fmax: int, duration: int, sr: int, linear: bool) -> np.ndarray:\n    \"\"\"\n    Constructs a \u201cchirp\u201d or \u201csine-sweep\u201d signal. The chirp sweeps from frequency fmin to fmax (in Hz).\n\n    Parameters:\n        fmin: The minimum frequency of the chirp in Hz.\n        fmax: The maximum frequency of the chirp in Hz.\n        duration: The duration of the chirp in seconds.\n        sr: The sampling rate of the signal in Hz.\n        linear: If True, use linear frequency sweep; if False, use logarithmic sweep.\n\n    Returns:\n        np.ndarray: The chirp signal.\n    \"\"\"\n    # Number of samples\n    n_samples = int(duration * sr)\n    # Generate time array\n    t = np.linspace(0, duration, n_samples, endpoint=False)\n\n    if linear:\n        # Linear chirp from fmin to fmax\n        # librosa.chirp supports linear sweep with method='linear'\n        signal = librosa.chirp(fmin=fmin, fmax=fmax, sr=sr, length=n_samples, method='linear')\n    else:\n        # Logarithmic chirp from fmin to fmax\n        # librosa.chirp supports logarithmic sweep with method='logarithmic'\n        signal = librosa.chirp(fmin=fmin, fmax=fmax, sr=sr, length=n_samples, method='logarithmic')\n\n    return signal\n",
+  "after": "import numpy as np\n\ndef compute_chirp(fmin: int, fmax: int, duration: int, sr: int, linear: bool) -> np.ndarray:\n    \"\"\"\n    Constructs a \u201cchirp\u201d or \u201csine-sweep\u201d signal. The chirp sweeps from frequency fmin to fmax (in Hz).\n\n    Parameters:\n        fmin: The minimum frequency of the chirp in Hz.\n        fmax: The maximum frequency of the chirp in Hz.\n        duration: The duration of the chirp in seconds.\n        sr: The sampling rate of the signal in Hz.\n        linear: If True, use linear frequency sweep; if False, use logarithmic sweep.\n\n    Returns:\n        np.ndarray: The chirp signal.\n    \"\"\"\n    from scipy.signal import chirp\n\n    # Number of samples\n    n_samples = int(duration * sr)\n    # Generate time array\n    t = np.linspace(0, duration, n_samples, endpoint=False)\n\n    if linear:\n        # Linear chirp from fmin to fmax\n        signal = chirp(t, f0=fmin, f1=fmax, t1=duration, method='linear')\n    else:\n        # Logarithmic chirp from fmin to fmax\n        signal = chirp(t, f0=fmin, f1=fmax, t1=duration, method='logarithmic')\n\n    return signal\n",
+  "findings": [
+   "line 26: MISSING `librosa.chirp` - librosa has no attribute 'chirp'."
+  ],
+  "model_findings": "1. line 26: `librosa.chirp` does not exist in the installed version (librosa has no attribute 'chirp'); no similarly named symbol was found, so use a different approach. The installed `librosa` provides: LibrosaError, audio, autocorrelate(y, max_size=None, axis=-1), cache, clicks(times=None, frames=None, sr=22050, hop_length=512, click_freq=1000.0, click_duration=0.1, click=None, length=None), constantq, core, cqt(y, sr=22050, hop_length=512, fmin=None, n_bins=84, bins_per_octave=12, tuning=0.0, filter_scale=1, norm=1, sparsity=0.01, window='hann', scale=True, pad_mode='reflect'), cqt_frequencies(n_bins, fmin, bins_per_octave=12, tuning=0.0), decompose, effects, feature, filters, frames_to_samples(frames, hop_length=512, n_fft=None), harmonic, hybrid_cqt(y, sr=22050, hop_length=512, fmin=None, n_bins=84, bins_per_octave=12, tuning=0.0, filter_scale=1, norm=1, sparsity=0.01, window='hann', scale=True, pad_mode='reflect'), hz_to_mel(frequencies, htk=False), hz_to_midi(frequencies), icqt(C, sr=22050, hop_length=512, fmin=None, bins_per_octave=12, tuning=0.0, filter_scale=1, norm=1, sparsity=0.01, window='hann', scale=True, amin=1e-06), ifgram(y, sr=22050, n_fft=2048, hop_length=None, win_length=None, window='hann', norm=False, center=True, ref_power=1e-06, clip=True, dtype=<class 'numpy.complex64'>, pad_mode='reflect'), iirt(y, sr=22050, win_length=2048, hop_length=None, center=True, tuning=0.0, pad_mode='reflect', **kwargs), interp_harmonics(x, freqs, h_range, kind='linear', fill_value=0, axis=0), istft(stft_matrix, hop_length=None, win_length=None, window='hann', center=True, dtype=<class 'numpy.float32'>, length=None), magphase(D, power=1), octs_to_hz(octs, A440=440.0), output, piptrack(y=None, sr=22050, S=None, n_fft=2048, hop_length=None, fmin=150.0, fmax=4000.0, threshold=0.1), pitch, pitch_tuning(frequencies, resolution=0.01, bins_per_octave=12), re, resample(y, orig_sr, target_sr, res_type='kaiser_best', fix=True, scale=False, **kwargs), salience(S, freqs, h_range, weights=None, aggregate=None, filter_peaks=True, fill_value=nan, kind='linear', axis=0), show_versions(), spectrum, time_frequency, time_to_frames(times, sr=22050, hop_length=512, n_fft=None), time_to_samples(times, sr=22050), util, version, warnings.",
+  "kinds": [
+   "MISSING"
+  ],
+  "hidden_before": false,
+  "hidden_after": true
+ },
+ {
+  "id": 303,
+  "library": "librosa",
+  "version": "0.7.0",
+  "python": "3.7",
+  "problem": "Complete the function to locate the local minimas of an array. ",
+  "starting_code": "import librosa\nimport numpy as np\n\ndef compute_localmin(x: np.ndarray, axis: int) -> np.ndarray:\n    ",
+  "before": "import librosa\nimport numpy as np\n\ndef compute_localmin(x: np.ndarray, axis: int) -> np.ndarray:\n    # Use librosa.util.localmin to find local minima along the specified axis\n    return librosa.util.localmin(x, axis=axis)",
+  "after": "import librosa\nimport numpy as np\n\ndef compute_localmin(x: np.ndarray, axis: int) -> np.ndarray:\n    # Since librosa.util.localmin does not exist, we find local minima by inverting the signal and using localmax\n    return librosa.util.localmax(-x, axis=axis)\n",
+  "findings": [
+   "line 6: RENAMED `librosa.util.localmin` - librosa.util has no attribute 'localmin'.  Did you mean: librosa.util.localmax"
+  ],
+  "model_findings": "1. line 6: `librosa.util.localmin` does not exist in the installed version (librosa.util has no attribute 'localmin'). Names that do exist nearby: `librosa.util.localmax`. The installed `librosa.util` provides: Deprecated(), MAX_MEM_BLOCK, axis_sort(S, axis=-1, index=False, value=None), buf_to_float(x, n_bytes=2, dtype=<class 'numpy.float32'>), cyclic_gradient(data, edge_order=1, axis=-1), decorators, deprecation, example_audio_file(), exceptions, files, fill_off_diagonal(x, radius, value=0), find_files(directory, ext=None, recurse=True, case_sensitive=False, limit=None, offset=0), fix_frames(frames, x_min=0, x_max=None, pad=True), fix_length(data, size, axis=-1, **kwargs), frame(y, frame_length=2048, hop_length=512), index_to_slice(idx, idx_min=None, idx_max=None, step=None, pad=True), inspect, localmax(x, axis=0), match_events(events_from, events_to, left=True, right=True), match_intervals(intervals_from, intervals_to, strict=True), matching, nnls(A, B, **kwargs), normalize(S, norm=inf, axis=0, threshold=None, fill=None), pad_center(data, size, axis=-1, **kwargs), peak_pick(x, pre_max, post_max, pre_avg, post_avg, delta, wait), rename_kw(old_name, old_value, new_name, new_value, version_deprecated, version_removed), roll_sparse(x, shift, axis=0), softmask(X, X_ref, power=1, split_zeros=False), sparsify_rows(x, quantile=0.01), sync(data, idx, aggregate=None, pad=True, axis=-1), tiny(x), utils, valid_audio(y, mono=True), valid_int(x, cast=None), valid_intervals(intervals), warnings.",
+  "kinds": [
+   "RENAMED"
+  ],
+  "hidden_before": false,
+  "hidden_after": true
+ },
+ {
+  "id": 311,
+  "library": "librosa",
+  "version": "0.7.0",
+  "python": "3.7",
+  "problem": "Complete the function to compute the approximate constant-Q magnitude spectrogram inversion using the \u201cfast\u201d Griffin-Lim algorithm.",
+  "starting_code": "import librosa\nimport numpy as np\nimport scipy\nfrom typing import Union, Optional\n\nDTypeLike = Union[np.dtype, type]\n\ndef compute_griffinlim_cqt(y: np.ndarray, sr: int, C, n_iter: int, hop_length: int, fmin: int, bins_per_octave: int, tuning: float, filter_scale: 1, norm: int, sparsity: float, window: str, scale: bool, pad_mode: str, res_type: str, dtype: DTypeLike, length: Optional[int], momentum: float, init: Optional[str]) -> np.ndarray:\n    rng = np.random.RandomState(seed=0)",
+  "before": "import librosa\nimport numpy as np\nimport scipy\nfrom typing import Union, Optional\n\nDTypeLike = Union[np.dtype, type]\n\ndef compute_griffinlim_cqt(y: np.ndarray, sr: int, C, n_iter: int, hop_length: int, fmin: int, bins_per_octave: int, tuning: float, filter_scale: 1, norm: int, sparsity: float, window: str, scale: bool, pad_mode: str, res_type: str, dtype: DTypeLike, length: Optional[int], momentum: float, init: Optional[str]) -> np.ndarray:\n    rng = np.random.RandomState(seed=0)\n\n    # Initialize the phase\n    if init == 'random':\n        angles = np.exp(2j * np.pi * rng.rand(*C.shape))\n    elif init == 'phase':\n        angles = np.exp(1j * np.angle(C))\n    else:\n        # Default to random initialization\n        angles = np.exp(2j * np.pi * rng.rand(*C.shape))\n\n    # Initialize the complex spectrogram\n    complex_spec = np.abs(C) * angles\n\n    # Iterative Griffin-Lim algorithm\n    for i in range(n_iter):\n        # Inverse CQT\n        y_inv = librosa.icqt(complex_spec, sr=sr, hop_length=hop_length, fmin=fmin,\n                             bins_per_octave=bins_per_octave, filter_scale=filter_scale,\n                             norm=norm, sparsity=sparsity, window=window, scale=scale,\n                             pad_mode=pad_mode, res_type=res_type, dtype=dtype, length=length)\n\n        # Recompute CQT\n        rebuilt = librosa.cqt(y_inv, sr=sr, hop_length=hop_length, fmin=fmin,\n                              n_bins=C.shape[0], bins_per_octave=bins_per_octave,\n                              tuning=tuning, filter_scale=filter_scale, norm=norm,\n                              sparsity=sparsity, window=window, scale=scale,\n                              pad_mode=pad_mode, res_type=res_type, dtype=dtype)\n\n        # Update the phase\n        angles = np.exp(1j * np.angle(rebuilt))\n\n        # Apply momentum if specified\n        if momentum > 0 and i > 0:\n            complex_spec = np.abs(C) * (angles + momentum * prev_angles) / (1 + momentum)\n        else:\n            complex_spec = np.abs(C) * angles\n\n        prev_angles = angles\n\n    # Final inverse CQT\n    y_final = librosa.icqt(complex_spec, sr=sr, hop_length=hop_length, fmin=fmin,\n                           bins_per_octave=bins_per_octave, filter_scale=filter_scale,\n                           norm=norm, sparsity=sparsity, window=window, scale=scale,\n                           pad_mode=pad_mode, res_type=res_type, dtype=dtype, length=length)\n\n    return y_final\n",
+  "after": "import librosa\nimport numpy as np\nimport scipy\nfrom typing import Union, Optional\n\nDTypeLike = Union[np.dtype, type]\n\ndef compute_griffinlim_cqt(y: np.ndarray, sr: int, C, n_iter: int, hop_length: int, fmin: int, bins_per_octave: int, tuning: float, filter_scale: 1, norm: int, sparsity: float, window: str, scale: bool, pad_mode: str, res_type: str, dtype: DTypeLike, length: Optional[int], momentum: float, init: Optional[str]) -> np.ndarray:\n    rng = np.random.RandomState(seed=0)\n\n    # Initialize the phase\n    if init == 'random':\n        angles = np.exp(2j * np.pi * rng.rand(*C.shape))\n    elif init == 'phase':\n        angles = np.exp(1j * np.angle(C))\n    else:\n        # Default to random initialization\n        angles = np.exp(2j * np.pi * rng.rand(*C.shape))\n\n    # Initialize the complex spectrogram\n    complex_spec = np.abs(C) * angles\n\n    # Iterative Griffin-Lim algorithm\n    for i in range(n_iter):\n        # Inverse CQT\n        y_inv = librosa.icqt(complex_spec, sr=sr, hop_length=hop_length, fmin=fmin,\n                             bins_per_octave=bins_per_octave, tuning=tuning, filter_scale=filter_scale,\n                             norm=norm, sparsity=sparsity, window=window, scale=scale,\n                             length=length, res_type=res_type)\n\n        # Recompute CQT\n        rebuilt = librosa.cqt(y_inv, sr=sr, hop_length=hop_length, fmin=fmin,\n                              n_bins=C.shape[0], bins_per_octave=bins_per_octave,\n                              tuning=tuning, filter_scale=filter_scale, norm=norm,\n                              sparsity=sparsity, window=window, scale=scale,\n                              pad_mode=pad_mode, res_type=res_type)\n\n        # Update the phase\n        angles = np.exp(1j * np.angle(rebuilt))\n\n        # Apply momentum if specified\n        if momentum > 0 and i > 0:\n            complex_spec = np.abs(C) * (angles + momentum * prev_angles) / (1 + momentum)\n        else:\n            complex_spec = np.abs(C) * angles\n\n        prev_angles = angles\n\n    # Final inverse CQT\n    y_final = librosa.icqt(complex_spec, sr=sr, hop_length=hop_length, fmin=fmin,\n                           bins_per_octave=bins_per_octave, tuning=tuning, filter_scale=filter_scale,\n                           norm=norm, sparsity=sparsity, window=window, scale=scale,\n                           length=length, res_type=res_type)\n\n    return y_final\n",
+  "findings": [
+   "line 26: SIGNATURE `librosa.icqt` - unexpected keyword argument 'pad_mode'. Installed: icqt(C, sr=22050, hop_length=512, fmin=None, bins_per_octave=12, tuning=0.0, filter_scale=1, norm=1, sparsity=0.01, window='hann', scale=True, length=None, amin=<DEPRECATED parameter>, res_type='fft')",
+   "line 26: SIGNATURE `librosa.icqt` - unexpected keyword argument 'dtype'. Installed: icqt(C, sr=22050, hop_length=512, fmin=None, bins_per_octave=12, tuning=0.0, filter_scale=1, norm=1, sparsity=0.01, window='hann', scale=True, length=None, amin=<DEPRECATED parameter>, res_type='fft')",
+   "line 32: SIGNATURE `librosa.cqt` - unexpected keyword argument 'dtype'. Installed: cqt(y, sr=22050, hop_length=512, fmin=None, n_bins=84, bins_per_octave=12, tuning=0.0, filter_scale=1, norm=1, sparsity=0.01, window='hann', scale=True, pad_mode='reflect', res_type=None)"
+  ],
+  "model_findings": "1. line 26: call to `librosa.icqt`: unexpected keyword argument 'pad_mode'. The installed signature is `icqt(C, sr=22050, hop_length=512, fmin=None, bins_per_octave=12, tuning=0.0, filter_scale=1, norm=1, sparsity=0.01, window='hann', scale=True, length=None, amin=<DEPRECATED parameter>, res_type='fft')`.\n2. line 26: call to `librosa.icqt`: unexpected keyword argument 'dtype'. The installed signature is `icqt(C, sr=22050, hop_length=512, fmin=None, bins_per_octave=12, tuning=0.0, filter_scale=1, norm=1, sparsity=0.01, window='hann', scale=True, length=None, amin=<DEPRECATED parameter>, res_type='fft')`.\n3. line 32: call to `librosa.cqt`: unexpected keyword argument 'dtype'. The installed signature is `cqt(y, sr=22050, hop_length=512, fmin=None, n_bins=84, bins_per_octave=12, tuning=0.0, filter_scale=1, norm=1, sparsity=0.01, window='hann', scale=True, pad_mode='reflect', res_type=None)`.",
+  "kinds": [
+   "SIGNATURE"
+  ],
+  "hidden_before": false,
+  "hidden_after": true
+ },
+ {
+  "id": 312,
+  "library": "librosa",
+  "version": "0.8.0",
+  "python": "3.7",
+  "problem": "Complete the function to compute the approximate constant-Q magnitude spectrogram inversion using the \u201cfast\u201d Griffin-Lim algorithm.",
+  "starting_code": "import librosa\nimport numpy as np\nimport scipy\nfrom typing import Union, Optional\n\nDTypeLike = Union[np.dtype, type]\n\ndef compute_griffinlim_cqt(y: np.ndarray, sr: int, C, n_iter: int, hop_length: int, fmin: int, bins_per_octave: int, tuning: float, filter_scale: 1, norm: int, sparsity: float, window: str, scale: bool, pad_mode: str, res_type: str, dtype: DTypeLike, length: Optional[int], momentum: float, init: Optional[str]) -> np.ndarray:\n    rng = np.random.RandomState(seed=0)",
+  "before": "import librosa\nimport numpy as np\nimport scipy\nfrom typing import Union, Optional\n\nDTypeLike = Union[np.dtype, type]\n\ndef compute_griffinlim_cqt(y: np.ndarray, sr: int, C, n_iter: int, hop_length: int, fmin: int, bins_per_octave: int, tuning: float, filter_scale: 1, norm: int, sparsity: float, window: str, scale: bool, pad_mode: str, res_type: str, dtype: DTypeLike, length: Optional[int], momentum: float, init: Optional[str]) -> np.ndarray:\n    rng = np.random.RandomState(seed=0)\n\n    # Initialize the phase\n    if init == 'random':\n        angles = np.exp(2j * np.pi * rng.rand(*C.shape))\n    else:\n        angles = np.ones_like(C, dtype=np.complex64)\n\n    # Initialize the complex spectrogram\n    complex_spec = angles * np.abs(C)\n\n    for i in range(n_iter):\n        # Inverse CQT to time domain\n        y_inv = librosa.icqt(complex_spec, sr=sr, hop_length=hop_length, fmin=fmin,\n                             bins_per_octave=bins_per_octave, filter_scale=filter_scale,\n                             norm=norm, sparsity=sparsity, window=window, scale=scale,\n                             pad_mode=pad_mode, res_type=res_type, dtype=dtype, length=length)\n\n        # Recompute CQT from time domain signal\n        rebuilt = librosa.cqt(y_inv, sr=sr, hop_length=hop_length, fmin=fmin,\n                              bins_per_octave=bins_per_octave, filter_scale=filter_scale,\n                              norm=norm, sparsity=sparsity, window=window, scale=scale,\n                              pad_mode=pad_mode, res_type=res_type, dtype=dtype)\n\n        # Update the phase\n        angles = np.exp(1j * np.angle(rebuilt))\n\n        # Apply momentum\n        complex_spec = angles * np.abs(C) + momentum * complex_spec\n\n        # Normalize to magnitude of C\n        complex_spec = np.abs(C) * complex_spec / np.abs(complex_spec)\n\n    # Final inverse CQT\n    y_final = librosa.icqt(complex_spec, sr=sr, hop_length=hop_length, fmin=fmin,\n                           bins_per_octave=bins_per_octave, filter_scale=filter_scale,\n                           norm=norm, sparsity=sparsity, window=window, scale=scale,\n                           pad_mode=pad_mode, res_type=res_type, dtype=dtype, length=length)\n\n    return y_final\n",
+  "after": "import librosa\nimport numpy as np\nimport scipy\nfrom typing import Union, Optional\n\nDTypeLike = Union[np.dtype, type]\n\ndef compute_griffinlim_cqt(y: np.ndarray, sr: int, C, n_iter: int, hop_length: int, fmin: int, bins_per_octave: int, tuning: float, filter_scale: 1, norm: int, sparsity: float, window: str, scale: bool, pad_mode: str, res_type: str, dtype: DTypeLike, length: Optional[int], momentum: float, init: Optional[str]) -> np.ndarray:\n    rng = np.random.RandomState(seed=0)\n\n    # Initialize the phase\n    if init == 'random':\n        angles = np.exp(2j * np.pi * rng.rand(*C.shape))\n    else:\n        angles = np.ones_like(C, dtype=np.complex64)\n\n    # Initialize the complex spectrogram\n    complex_spec = angles * np.abs(C)\n\n    for i in range(n_iter):\n        # Inverse CQT to time domain\n        y_inv = librosa.icqt(complex_spec, sr=sr, hop_length=hop_length, fmin=fmin,\n                             bins_per_octave=bins_per_octave, tuning=tuning, filter_scale=filter_scale,\n                             norm=norm, sparsity=sparsity, window=window, scale=scale,\n                             res_type=res_type, dtype=dtype, length=length)\n\n        # Recompute CQT from time domain signal\n        rebuilt = librosa.cqt(y_inv, sr=sr, hop_length=hop_length, fmin=fmin,\n                              bins_per_octave=bins_per_octave, tuning=tuning, filter_scale=filter_scale,\n                              norm=norm, sparsity=sparsity, window=window, scale=scale,\n                              pad_mode=pad_mode, res_type=res_type, dtype=dtype)\n\n        # Update the phase\n        angles = np.exp(1j * np.angle(rebuilt))\n\n        # Apply momentum\n        complex_spec = angles * np.abs(C) + momentum * complex_spec\n\n        # Normalize to magnitude of C\n        complex_spec = np.abs(C) * complex_spec / np.abs(complex_spec)\n\n    # Final inverse CQT\n    y_final = librosa.icqt(complex_spec, sr=sr, hop_length=hop_length, fmin=fmin,\n                           bins_per_octave=bins_per_octave, tuning=tuning, filter_scale=filter_scale,\n                           norm=norm, sparsity=sparsity, window=window, scale=scale,\n                           res_type=res_type, dtype=dtype, length=length)\n\n    return y_final\n",
+  "findings": [
+   "line 22: SIGNATURE `librosa.icqt` - unexpected keyword argument 'pad_mode'. Installed: icqt(C, sr=22050, hop_length=512, fmin=None, bins_per_octave=12, tuning=0.0, filter_scale=1, norm=1, sparsity=0.01, window='hann', scale=True, length=None, res_type='fft', dtype=None)"
+  ],
+  "model_findings": "1. line 22: call to `librosa.icqt`: unexpected keyword argument 'pad_mode'. The installed signature is `icqt(C, sr=22050, hop_length=512, fmin=None, bins_per_octave=12, tuning=0.0, filter_scale=1, norm=1, sparsity=0.01, window='hann', scale=True, length=None, res_type='fft', dtype=None)`.",
+  "kinds": [
+   "SIGNATURE"
+  ],
+  "hidden_before": false,
+  "hidden_after": true
+ }
+]

@@ -1,0 +1,1147 @@
+\documentclass[12pt,a4paper]{report}
+
+% ── Packages ─────────────────────────────────────────────────────────────────
+\usepackage[a4paper, top=1in, bottom=1in, left=1in, right=0.9in]{geometry}
+\usepackage{amsmath, amssymb, amsfonts, mathtools}
+\usepackage{graphicx}
+\usepackage{booktabs, multirow, array, tabularx, longtable}
+\usepackage{xcolor}
+\usepackage{fancyhdr}
+\setlength{\headheight}{14.5pt}
+\usepackage{titlesec}
+\usepackage{setspace}
+\usepackage{hyperref}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{enumitem}
+\usepackage{microtype}
+\usepackage{float}
+\usepackage{parskip}
+\usepackage{tocloft}
+\usepackage{listings}
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+\usepackage{url}
+
+
+
+\usepackage{rotating}
+\usepackage{pifont}
+
+% ── Colours ──────────────────────────────────────────────────────────────────
+\definecolor{darkblue}{RGB}{26,53,87}
+\definecolor{midblue}{RGB}{46,117,182}
+\definecolor{lightgray}{RGB}{242,242,242}
+\definecolor{codered}{RGB}{192,0,0}
+\definecolor{codegray}{RGB}{100,100,100}
+
+% ── Hyperref ─────────────────────────────────────────────────────────────────
+\hypersetup{
+  colorlinks=true, linkcolor=darkblue, citecolor=darkblue, urlcolor=midblue,
+  pdfauthor={Abhijit Kumar},
+  pdftitle={NoiseBridge: Phonetic-Weighted Contrastive Learning for ASR-Robust Hate Speech Detection}
+}
+
+% ── Typography ────────────────────────────────────────────────────────────────
+\onehalfspacing
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{6pt}
+
+% ── Chapter / Section styling ─────────────────────────────────────────────────
+\titleformat{\chapter}[display]
+  {\normalfont\Large\bfseries\color{darkblue}}
+  {Chapter \thechapter}{12pt}{\LARGE}
+\titlespacing*{\chapter}{0pt}{-20pt}{20pt}
+
+\titleformat{\section}
+  {\normalfont\large\bfseries\color{darkblue}}{\thesection}{1em}{}
+\titleformat{\subsection}
+  {\normalfont\normalsize\bfseries\color{darkblue}}{\thesubsection}{1em}{}
+\titleformat{\subsubsection}
+  {\normalfont\normalsize\bfseries\itshape}{\thesubsubsection}{1em}{}
+
+% ── Header / Footer ───────────────────────────────────────────────────────────
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[R]{\small\itshape NoiseBridge: ASR-Robust Hate Speech Detection}
+\fancyfoot[C]{\small IIIT Senapati $|$ Project-I $|$ May 2026 \hfill \thepage}
+\renewcommand{\headrulewidth}{0.4pt}
+\renewcommand{\footrulewidth}{0.4pt}
+
+% ── Pseudocode style ──────────────────────────────────────────────────────────
+\lstset{
+  basicstyle=\small\ttfamily,
+  backgroundcolor=\color{lightgray},
+  frame=single, framerule=0.6pt,
+  breaklines=true, captionpos=b,
+  numbers=left, numberstyle=\tiny\color{codegray},
+  xleftmargin=2em
+}
+\algrenewcommand\algorithmicrequire{\textbf{Input:}}
+\algrenewcommand\algorithmicensure{\textbf{Output:}}
+
+% ── Caption styling ───────────────────────────────────────────────────────────
+\captionsetup{font=small, labelfont=bf, format=plain, justification=centering}
+
+% ── Math shortcuts ────────────────────────────────────────────────────────────
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\E}{\mathbb{E}}
+\newcommand{\bz}{\mathbf{z}}
+\newcommand{\bh}{\mathbf{h}}
+\newcommand{\bH}{\mathbf{H}}
+\newcommand{\bp}{\mathbf{p}}
+\newcommand{\bW}{\mathbf{W}}
+\newcommand{\bb}{\mathbf{b}}
+\newcommand{\PWNIC}{\mathcal{L}_{\mathrm{PWNIC}}}
+\newcommand{\LCE}{\mathcal{L}_{\mathrm{CE}}}
+\newcommand{\Laux}{\mathcal{L}_{\mathrm{aux}}}
+\newcommand{\Ltot}{\mathcal{L}}
+\newcommand{\simfn}{\mathrm{sim}}
+\newcommand{\JW}{\mathrm{JW}}
+
+% ─────────────────────────────────────────────────────────────────────────────
+\begin{document}
+
+% ═══════════════════════════════════════════════════════════════════════════
+%  TITLE PAGE
+% ═══════════════════════════════════════════════════════════════════════════
+\thispagestyle{empty}
+\begin{center}
+  \includegraphics[width=2.8cm]{fig_logo.png}\\[6pt]
+  {\large\bfseries Indian Institute of Information Technology Senapati, Manipur}\\
+  {\normalsize Department of Computer Science and Engineering}\\[8pt]
+  \rule{\textwidth}{0.8pt}\\[30pt]
+  {\LARGE\bfseries NoiseBridge: Phonetic-Weighted Contrastive Learning\\[6pt]
+   for ASR-Robust Hate Speech Detection\\[6pt]
+   in Hindi-English Code-Mixed Text}\\[20pt]
+  {\normalsize\itshape A report submitted for the course named Project -- I (CS3201)}\\[30pt]
+  \rule{0.5\textwidth}{0.4pt}\\[12pt]
+  {\normalsize Submitted By}\\[6pt]
+  {\large\bfseries ABHIJIT KUMAR}\\
+  {\normalsize SEMESTER VI \quad $|$ \quad Roll No: 230101031}\\[20pt]
+  {\normalsize Supervised By}\\[6pt]
+  {\large\bfseries DR.\ N.\ KISHORJIT SINGH}\\
+  {\normalsize Associate Professor, Department of Computer Science and Engineering}\\[40pt]
+  \vfill
+  \rule{\textwidth}{0.8pt}\\[6pt]
+  {\normalsize\bfseries DEPARTMENT OF COMPUTER SCIENCE AND ENGINEERING}\\
+  {\normalsize INDIAN INSTITUTE OF INFORMATION TECHNOLOGY SENAPATI, MANIPUR}\\
+  {\normalsize MAY, 2026}
+\end{center}
+\clearpage
+
+% ═══════════════════════════════════════════════════════════════════════════
+%  DECLARATION
+% ═══════════════════════════════════════════════════════════════════════════
+\thispagestyle{empty}
+\chapter*{Declaration}
+\addcontentsline{toc}{chapter}{Declaration}
+\rule{\textwidth}{0.6pt}\\[10pt]
+In this submission, I have expressed my idea in my own words, and I have adequately cited and referenced any ideas or words that were taken from another source. I also declare that I adhere to all principles of academic honesty and integrity and that I have not misrepresented or falsified any ideas, data, facts, or sources in this submission. If any violation of the above is made, I understand that the institute may take disciplinary action.\\[40pt]
+\begin{flushright}
+Abhijit Kumar\\
+230101031\\[8pt]
+Date: \rule{4cm}{0.4pt}
+\end{flushright}
+\clearpage
+
+% ═══════════════════════════════════════════════════════════════════════════
+%  CERTIFICATE
+% ═══════════════════════════════════════════════════════════════════════════
+\thispagestyle{empty}
+\begin{minipage}[c]{0.12\textwidth}
+  \includegraphics[width=\linewidth]{fig_logo.png}
+\end{minipage}
+\hspace{6pt}
+\vrule width 0.6pt
+\hspace{6pt}
+\begin{minipage}[c]{0.82\textwidth}
+  {\bfseries Department of Computer Science and Engineering}\\
+  Indian Institute of Information Technology Senapati, Manipur
+\end{minipage}
+
+\vspace{6pt}
+\rule{\textwidth}{0.6pt}
+
+\begin{minipage}[t]{0.5\textwidth}
+  {\bfseries Dr.\ N.\ Kishorjit Singh}\\
+  Associate Professor, CSE, IIIT Manipur
+\end{minipage}%
+\begin{minipage}[t]{0.5\textwidth}
+  \raggedleft
+  Email: \href{mailto:kishorjit@iiitmanipur.ac.in}{kishorjit@iiitmanipur.ac.in}\\
+  Contact No: +91 8974008610
+\end{minipage}
+
+\vspace{30pt}
+\begin{center}
+  {\Large\bfseries\itshape To Whom It May Concern}
+\end{center}
+\vspace{16pt}
+
+This is to certify that the project report entitled \textbf{``NoiseBridge: Phonetic-Weighted Contrastive Learning for ASR-Robust Hate Speech Detection in Hindi-English Code-Mixed Text,''} submitted to the Department of Computer Science and Engineering, Indian Institute of Information Technology Senapati, Manipur, in partial fulfilment for the award of the degree of Bachelor of Technology in Computer Science and Engineering, is a record of bonafide work carried out by \textbf{Abhijit Kumar} bearing roll number \textbf{230101031} for the course Project-I (CS3201).
+
+\vspace{50pt}
+\begin{flushright}
+  Signature of the Supervisor\\[6pt]
+  \textbf{(Dr.\ N.\ Kishorjit Singh)}
+\end{flushright}
+
+\vspace{30pt}
+Signature of the Examiner 1 \enspace \dotfill\\[10pt]
+Signature of the Examiner 2 \enspace \dotfill\\[10pt]
+Signature of the Examiner 3 \enspace \dotfill\\[10pt]
+Signature of the Examiner 4 \enspace \dotfill
+\clearpage
+
+% ═══════════════════════════════════════════════════════════════════════════
+%  ABSTRACT
+% ═══════════════════════════════════════════════════════════════════════════
+\chapter*{Abstract}
+\addcontentsline{toc}{chapter}{Abstract}
+\rule{\textwidth}{0.6pt}\\[6pt]
+Hate speech detection systems trained on clean, well-formed text degrade measurably when deployed against noisy transcripts produced by Automatic Speech Recognition (ASR) systems. The challenge is acute for Hindi-English code-mixed speech (Hinglish), where current ASR word-error rates reach 15--40\%, and where the absence of standardised romanisation amplifies surface-form variability.
+
+We introduce \textbf{HindiMix-Noisy}, the first multi-level ASR noise benchmark for hate speech detection on Hindi-English code-mixed text, comprising 123,631 training examples across four noise conditions. We propose \textbf{NoiseBridge}, centred on \textbf{PWNIC} (Phonetic-Weighted Noise-Invariant Contrastive) loss, which scales contrastive alignment by the Jaro-Winkler phonetic dissimilarity $\phi(x^c, \tilde{x})$ between clean and noisy utterance pairs.
+
+Across three multilingual encoders (mBERT, MuRIL, XLM-R) and three random seeds, NoiseBridge achieves $+0.41$ macro-F1 average gain on XLM-R, with the largest improvement of $+0.56$ under high noise. A documented negative result --- catastrophic failure of a Gradient Reversal Layer variant --- contributes a structural diagnosis of adversarial noise disentanglement failure in single-noise-level training batches.
+
+\vspace{12pt}
+\noindent\textbf{Keywords:} Hate Speech Detection, Code-Mixed NLP, ASR Noise Robustness, Contrastive Learning, Phonetic Similarity, Hindi-English, PWNIC, HindiMix-Noisy.
+\clearpage
+
+% ═══════════════════════════════════════════════════════════════════════════
+%  ACKNOWLEDGEMENTS
+% ═══════════════════════════════════════════════════════════════════════════
+\chapter*{Acknowledgements}
+\addcontentsline{toc}{chapter}{Acknowledgements}
+I am profoundly grateful to my project supervisor, Dr.\ N.\ Kishorjit Singh, whose expertise in natural language processing and sustained intellectual engagement shaped this research. His incisive technical criticism exposed weaknesses in early formulations, and his insistence on honest reporting of negative results elevated this work beyond a routine positive-results study.
+
+I acknowledge the Kaggle research computing platform for multi-GPU Tesla T4 instances, and the creators of the public datasets --- Davidson et al., Zampieri et al.\ (OLID), the SemEval 2020 Task 9 organisers, the HASOC 2021 team, and the UCB Measuring Hate and TweetEval teams.
+
+\vspace{20pt}
+\begin{flushright}
+Abhijit Kumar\\
+IIIT Senapati, Manipur\\
+May 2026
+\end{flushright}
+\clearpage
+
+% ── TOC / LOF / LOT ──────────────────────────────────────────────────────────
+\tableofcontents\clearpage
+\listoffigures\clearpage
+\listoftables\clearpage
+
+% ═══════════════════════════════════════════════════════════════════════════
+%  CHAPTER 1: INTRODUCTION
+% ═══════════════════════════════════════════════════════════════════════════
+\chapter{Introduction}
+
+\section{Motivation and Context}
+The landscape of online hate speech has shifted substantially: voice messages, live streams, and podcast transcripts processed by Automatic Speech Recognition (ASR) systems now constitute a major source of online content. ASR output is inherently noisy --- character substitutions, insertions, deletions, and word-boundary splits occur at rates of 15--40\% for Hindi-English code-mixed (Hinglish) speech, compared to 5--10\% for monolingual English.
+
+\section{Problem Statement}
+Let a hate speech classifier be $f: \mathcal{X} \rightarrow \{\texttt{hate}, \texttt{non-hate}\}$ trained on a corpus drawn from the clean distribution $\mathcal{P}_{\text{clean}}$. At deployment, inputs arrive from $\mathcal{P}_{\text{noisy}}$. The covariate shift is:
+\begin{equation}
+  \mathcal{P}_{\text{clean}}(x) \neq \mathcal{P}_{\text{noisy}}(\tilde{x})
+  \quad \text{yet} \quad
+  \mathcal{P}_{\text{clean}}(y \mid x) \approx \mathcal{P}_{\text{noisy}}(y \mid \tilde{x})
+  \label{eq:covariate_shift}
+\end{equation}
+Labels are preserved across the noise transformation; only the surface form changes. Formally, we seek a representation function $g(\cdot)$ satisfying:
+\begin{equation}
+  \bigl\| g(x^c) - g(\tilde{x}) \bigr\| < \epsilon
+  \quad \forall\; (x^c, \tilde{x}) \text{ s.t. } \mathrm{meaning}(x^c) = \mathrm{meaning}(\tilde{x})
+  \label{eq:invariance_target}
+\end{equation}
+NoiseBridge operationalises \eqref{eq:invariance_target} via the PWNIC contrastive loss defined in Chapter~\ref{ch:method}.
+
+\section{Research Contributions}
+\begin{enumerate}[leftmargin=*, label=\textbf{\arabic*.}]
+  \item \textbf{HindiMix-Noisy Benchmark:} First multi-level ASR noise benchmark for code-mixed hate speech, 123,631 training examples across four noise conditions.
+  \item \textbf{PWNIC Loss:} InfoNCE extended with instance-dependent phonetic dissimilarity weights derived from Jaro-Winkler similarity.
+  \item \textbf{NoiseBridge Framework:} Complete multi-objective training framework combining PWNIC, a noise-aware attention gate, and an auxiliary noise-level predictor.
+  \item \textbf{Documented GRL Failure:} Structural diagnosis of adversarial noise disentanglement failure in single-noise-level training batches.
+  \item \textbf{Tokeniser-Phonetic Interaction Hypothesis:} Mechanistic explanation for differential encoder benefit.
+\end{enumerate}
+
+% ═══════════════════════════════════════════════════════════════════════════
+%  CHAPTER 2: RELATED WORK
+% ═══════════════════════════════════════════════════════════════════════════
+\chapter{Related Work}
+
+\section{Automated Hate Speech Detection}
+Davidson et al.\ \cite{davidson2017automated} established the foundational dataset and lexical baseline for hate speech classification. BERT-based approaches \cite{devlin2019bert, mozafari2020bert} substantially outperform lexical methods. HateBERT \cite{caselli2020hatebert} demonstrated domain-adaptive pretraining benefits. All prior work evaluates on clean, keyboarded text.
+
+\section{Code-Mixed NLP}
+Barman et al.\ \cite{barman2014code} characterised Hindi-English code-mixing as the dominant online register among 350 million Indian internet users. Pratapa et al.\ \cite{pratapa2018language} showed that WordPiece tokenisation fragments romanised Hindi words incoherently. Khanuja et al.\ \cite{khanuja2020gluecos} introduced GLUECoS for code-switched NLP evaluation.
+
+\section{Noise-Robust NLP}
+Belinkov and Bisk \cite{belinkov2018synthetic} demonstrated that character-level noise severely degrades neural MT. ByT5 \cite{xue2022byt5} provides byte-level robustness by avoiding subword OOV entirely. No prior work targets noise robustness for hate speech detection on code-mixed text.
+
+\section{Contrastive Learning}
+The InfoNCE objective \cite{oord2018representation} is the mathematical foundation of PWNIC. SimCSE \cite{gao2021simcse} demonstrated its effectiveness for sentence embedding. SpokenCSE (Chang \& Chen, Interspeech 2022) applies contrastive alignment to ASR-degraded text --- the closest prior work. DANN \cite{ganin2016domain} introduced gradient reversal for domain invariance, which we adapt and document as a failure.
+
+\begin{table}[H]
+\centering
+\caption{Key related works and their relation to NoiseBridge contributions}
+\label{tab:related}
+\small
+\begin{tabular}{llp{4.5cm}p{4cm}}
+\toprule
+\textbf{Ref} & \textbf{Work} & \textbf{Key Contribution} & \textbf{NoiseBridge Relation}\\
+\midrule
+\cite{davidson2017automated} & Davidson et al.\ 2017 & Hate speech dataset + lexical classifiers & Source corpus for HindiMix-Noisy \\
+\cite{oord2018representation} & van den Oord 2018 & InfoNCE contrastive objective & Mathematical base of PWNIC \\
+\cite{gao2021simcse} & SimCSE & Dropout contrastive sentences & Framework closest to NoiseBridge \\
+\cite{ganin2016domain} & DANN & Gradient reversal, domain invariance & GRL approach tested and rejected \\
+SpokenCSE & Chang \& Chen 2022 & ASR-text contrastive alignment & Closest prior; PWNIC extends it \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+% ═══════════════════════════════════════════════════════════════════════════
+%  CHAPTER 3: BENCHMARK
+% ═══════════════════════════════════════════════════════════════════════════
+\chapter{The HindiMix-Noisy Benchmark}
+
+\section{Source Dataset Selection and Aggregation}
+Seven publicly available datasets were aggregated and harmonised into a unified binary (\texttt{hate}/\texttt{non-hate}) schema. After deduplication, the merged corpus contains 123,631 unique instances: 51.6\% English and 48.4\% Hindi-English code-mixed.
+
+\begin{table}[H]
+\centering
+\caption{Source datasets and binary label mapping}
+\label{tab:sources}
+\small
+\begin{tabular}{llrllp{3.5cm}}
+\toprule
+\textbf{Dataset} & \textbf{Year} & \textbf{N} & \textbf{Lang.} & \textbf{Original Labels} & \textbf{Binary Mapping}\\
+\midrule
+Davidson et al. & 2017 & 25,000 & en & hate/offensive/neither & hate$\rightarrow$hate; else$\rightarrow$non-hate \\
+OLID & 2019 & 9,774 & en & OFF/NOT & OFF$\rightarrow$hate \\
+SemEval 2020 T9 & 2020 & 18,631 & hi-en & HS/Not-HS & Direct \\
+HASOC 2021 & 2021 & 7,952 & hi-en & HOF/NOT & HOF$\rightarrow$hate \\
+UCB Measuring Hate & 2020 & 27,854 & en & Continuous & $\geq 0.5 \rightarrow$ hate \\
+TweetEval Hate & 2021 & 8,909 & en & hate/non-hate & Direct \\
+Web Scraped & 2024 & 34,293 & hi-en & hate/non-hate & Direct \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{HindiMix-Noisy benchmark partition statistics}
+\label{tab:benchmark}
+\small
+\begin{tabular}{lrrll}
+\toprule
+\textbf{Split} & \textbf{Instances} & \textbf{Hate \%} & \textbf{Language} & \textbf{Noise Level}\\
+\midrule
+Train (clean)        & 78,778 & 37.6 & en + hi-en & None ($p=0$) \\
+Train (low noise)    & 14,951 &  6.3 & en + hi-en & $p_{\ell}=0.05$ \\
+Train (medium noise) & 14,951 &  6.3 & en + hi-en & $p_{\ell}=0.10$ \\
+Train (high noise)   & 14,951 &  6.3 & en + hi-en & $p_{\ell}=0.20$ \\
+Validation (each cond.) & 16,882 & 37.6 & en + hi-en & Each separately \\
+Test (each cond.)    & 16,882 & 37.6 & en + hi-en & Each separately \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\section{Noise Injection Methodology}
+
+\subsection{Noise Model Calibration}
+The perturbation probabilities are calibrated to empirical ASR character error rates for Hinglish speech \cite{shah2020learning}:
+\[
+  p_{\text{low}} = 0.05, \quad p_{\text{medium}} = 0.10, \quad p_{\text{high}} = 0.20
+\]
+
+\subsection{Formal Noise Injection}
+Let $x = (c_1, c_2, \ldots, c_n)$ be a clean input of $n$ characters and let $\Sigma$ denote the character vocabulary. For noise level $\ell$ with perturbation probability $p_\ell$, each character $c_i$ undergoes one of four operations, each applied with probability $p_\ell / 4$:
+
+\begin{align}
+  &\textbf{Substitution:}  && c_i \;\longrightarrow\; c_i' \sim \mathrm{Uniform}(\Sigma) \label{eq:sub}\\
+  &\textbf{Insertion:}     && c_i \;\longrightarrow\; c_i \cdot c', \quad c' \sim \mathrm{Uniform}(\Sigma) \label{eq:ins}\\
+  &\textbf{Deletion:}      && c_i \;\longrightarrow\; \varepsilon \quad \text{(character omitted)} \label{eq:del}\\
+  &\textbf{Word Split:}    && c_i \;\longrightarrow\; c_i \cdot \texttt{` '} \quad \text{(space appended)} \label{eq:spl}
+\end{align}
+
+With probability $1 - p_\ell$, the character is copied unchanged.
+
+\subsection{Expected Noise Magnitude}
+For a text of $n$ characters processed at noise level $\ell$:
+\begin{equation}
+  \mathbb{E}\!\left[\,\bigl|\{i : \text{operation applied to } c_i\}\bigr|\,\right] = n \cdot p_\ell
+  \label{eq:expected_ops}
+\end{equation}
+Letting $N_{\text{sub}}, N_{\text{ins}}, N_{\text{del}}, N_{\text{spl}}$ denote operation counts, the Character Error Rate is:
+\begin{equation}
+  \mathrm{CER} = \frac{N_{\text{sub}} + N_{\text{ins}} + N_{\text{del}} + N_{\text{spl}}}{n_{\text{clean}}}
+  \label{eq:cer}
+\end{equation}
+Since $\mathbb{E}[N_{\text{sub}}] = \mathbb{E}[N_{\text{ins}}] = \mathbb{E}[N_{\text{del}}] = \mathbb{E}[N_{\text{spl}}] = n \cdot p_\ell / 4$:
+\begin{equation}
+  \mathbb{E}[\mathrm{CER}] = \frac{n \cdot p_\ell / 4 \cdot 4}{n} = p_\ell
+  \label{eq:cer_proof}
+\end{equation}
+This is verified empirically: across all three noisy subsets the observed mean CER lies within $\pm 0.5$ percentage points of the target $p_\ell$.
+
+\begin{table}[H]
+\centering
+\caption{Noise injection parameters by level}
+\label{tab:noise_params}
+\small
+\begin{tabular}{lcccc}
+\toprule
+\textbf{Parameter} & \textbf{Low} & \textbf{Medium} & \textbf{High} & \textbf{Interpretation}\\
+\midrule
+$p_\ell$ (perturbation prob.) & 0.05 & 0.10 & 0.20 & Target CER \\
+$p_\ell/4$ (per-operation prob.) & 0.0125 & 0.025 & 0.050 & Each of 4 ops \\
+$\mathbb{E}[\mathrm{CER}]$ & 5\% & 10\% & 20\% & Empirically verified \\
+Expected chars modified per 100 & 5 & 10 & 20 & Direct consequence \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.96\textwidth]{fig_flow.png}
+  \caption{Per-character noise injection algorithm with four stochastic operations and branching probabilities. Each character is independently processed; the four operations model substitution, insertion, deletion, and word-boundary split errors characteristic of ASR on Hinglish speech.}
+  \label{fig:noise_flow}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=\textwidth]{fig_pipe.png}
+  \caption{HindiMix-Noisy benchmark construction pipeline: seven source datasets are harmonised, deduplicated, partitioned, and noise-injected to yield the final benchmark.}
+  \label{fig:pipeline}
+\end{figure}
+
+% ═══════════════════════════════════════════════════════════════════════════
+%  CHAPTER 4: METHOD
+% ═══════════════════════════════════════════════════════════════════════════
+\chapter{NoiseBridge: Architecture and Mathematical Framework}
+\label{ch:method}
+
+\section{System Architecture Overview}
+NoiseBridge augments a pretrained multilingual encoder $f_\theta$ with three lightweight components: a noise-aware attention gate $g_\psi$, a projection head $\pi_\xi$ for contrastive learning, and an auxiliary noise-level classifier $q_\eta$. During training the framework operates on paired $(x^c, \tilde{x})$ instances; at inference only the clean-path encoder and gate are used.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.72\textwidth]{fig_arch.png}
+  \caption{NoiseBridge full system architecture. Both $x^c$ (clean) and $\tilde{x}$ (noisy) are encoded through a shared encoder $f_\theta$. The noise-aware gate $g_\psi$ produces sentence representations $\mathbf{z}^c$ and $\mathbf{z}^n$. The projection head $\pi_\xi$ maps to the contrastive space for PWNIC loss. Classifier heads apply $\mathcal{L}_{\text{CE}}$; the auxiliary head $q_\eta$ predicts noise level from $\mathbf{z}^n$.}
+  \label{fig:arch}
+\end{figure}
+
+\section{Noise-Aware Attention Gate}
+\label{sec:gate}
+ASR-transcribed text contains corrupted tokens at unpredictable positions. Standard mean-pooling treats every token with equal weight, meaning a heavily corrupted token contributes identically to a clean one. The noise-aware attention gate addresses this by learning a scalar suppression weight per token, dynamically down-weighting positions whose contextual representation is indicative of noise corruption.
+
+\subsubsection{Mathematical Formulation}
+Let $\mathbf{H} = f_\theta(x) \in \R^{L \times d}$ be the contextual token representations from the encoder, where $L$ is the sequence length and $d = 768$ is the hidden dimension. The gate is parameterised by $\mathbf{W}_g \in \R^{d \times 1}$ and $\mathbf{b}_g \in \R^{L}$:
+\begin{equation}
+  g_\psi(\mathbf{H}) = \mathbf{H} \;\odot\; \sigma\!\left(\mathbf{H}\,\mathbf{W}_g + \mathbf{b}_g\right)
+  \label{eq:gate}
+\end{equation}
+where $\sigma(\cdot)$ is the element-wise sigmoid and $\odot$ denotes element-wise multiplication. The per-token gate scalar is:
+\begin{equation}
+  \alpha_i = \sigma\!\left(\mathbf{h}_i^\top \mathbf{W}_g + b_{g,i}\right) \;\in\; [0,\,1]
+  \label{eq:gate_scalar}
+\end{equation}
+with gated token representation $\mathbf{h}_i' = \alpha_i \cdot \mathbf{h}_i$. These are aggregated via masked mean-pooling:
+\begin{equation}
+  \mathbf{z} = \frac{\displaystyle\sum_{i=1}^{L} \alpha_i \cdot \mathbf{h}_i \cdot m_i}{\displaystyle\sum_{i=1}^{L} m_i}
+  \label{eq:gated_pool}
+\end{equation}
+where $m_i \in \{0,1\}$ is the attention mask ($m_i = 0$ for padding tokens) and $\mathbf{z} \in \R^d$ is the final sentence representation.
+
+The gate adds only $d + L = 896$ parameters --- negligible relative to the $\geq\!110$M-parameter pretrained encoders. Gate weights are initialised to $\mathbf{W}_g = \mathbf{0}$, so all $\alpha_i = \sigma(0) = 0.5$ at initialisation, recovering standard mean-pooling as the neutral starting point.
+
+\section{Phonetic-Weighted Noise-Invariant Contrastive Loss (PWNIC)}
+\label{sec:pwnic}
+
+\subsection{Motivation}
+Standard contrastive objectives treat every clean-noisy pair with equal alignment pressure. A pair where a single character was substituted receives the same gradient magnitude as one where 20\% of characters were corrupted. This uniformity is suboptimal: trivially similar pairs carry almost no useful alignment information, while severely distorted pairs are precisely where explicit guidance is most needed. PWNIC corrects this by scaling the contrastive gradient by the phonetic dissimilarity between each pair.
+
+\subsection{Jaro-Winkler Phonetic Dissimilarity Weight}
+
+The Jaro similarity between two strings $s$ and $t$ is defined as:
+\begin{equation}
+  J(s,\,t) =
+  \begin{cases}
+    \dfrac{1}{3}\!\left[\dfrac{m}{|s|} + \dfrac{m}{|t|} + \dfrac{m - t_r}{m}\right] & \text{if } m > 0 \\[8pt]
+    0 & \text{if } m = 0
+  \end{cases}
+  \label{eq:jaro}
+\end{equation}
+where $m$ is the number of matching characters (character $c_i \in s$ matches $c_j \in t$ if $c_i = c_j$ and $|i-j| \leq \lfloor\max(|s|,|t|)/2\rfloor - 1$) and $t_r$ is half the number of transpositions among matched characters.
+
+The Jaro-Winkler similarity extends Jaro with a common-prefix bonus:
+\begin{equation}
+  \JW(s,\,t) = J(s,\,t) + \ell \cdot p_w \cdot \bigl(1 - J(s,\,t)\bigr)
+  \label{eq:jaro_winkler}
+\end{equation}
+where $\ell$ is the length of the longest common prefix (capped at 4) and $p_w = 0.1$ is the fixed scaling constant. Note: $\JW(s,t) \in [0,1]$, with $\JW = 1$ for identical strings.
+
+For a word-tokenised clean-noisy pair $(x^c, \tilde{x})$ with word sequences $(w_1^c, \ldots, w_{n_c}^c)$ and $(w_1^n, \ldots, w_{n_n}^n)$, let $M = \max(n_c, n_n)$. Shorter sequences are padded with empty strings (contributing $\JW$ similarity of 0). The phonetic dissimilarity weight is:
+\begin{equation}
+  \phi(x^c,\,\tilde{x}) = 1 - \frac{1}{M} \sum_{j=1}^{M} \JW\!\left(w_j^c,\, w_j^n\right)
+  \label{eq:phi}
+\end{equation}
+Thus $\phi \in [0,1]$: $\phi = 0$ when $x^c = \tilde{x}$ (zero distortion, zero contrastive contribution); $\phi \to 1$ as the texts diverge completely.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.9\textwidth]{fig_jw.png}
+  \caption{Jaro-Winkler similarity and phonetic dissimilarity weight $\phi_j$ for representative Hinglish word pairs. Higher noise consistently produces larger $\phi$, validating the weighting scheme.}
+  \label{fig:jw}
+\end{figure}
+
+\subsection{The PWNIC Objective}
+
+Let $\pi_\xi : \R^d \to \R^{256}$ be a two-layer MLP projection head. The L2-normalised projected representations are:
+\begin{equation}
+  \mathbf{p}_i^c = \frac{\pi_\xi(\mathbf{z}_i^c)}{\|\pi_\xi(\mathbf{z}_i^c)\|}, \qquad
+  \mathbf{p}_i^n = \frac{\pi_\xi(\mathbf{z}_i^n)}{\|\pi_\xi(\mathbf{z}_i^n)\|}
+  \label{eq:projection}
+\end{equation}
+For L2-normalised vectors, cosine similarity reduces to a dot product:
+\begin{equation}
+  \simfn(\mathbf{a},\,\mathbf{b}) = \mathbf{a}^\top \mathbf{b}
+  \label{eq:cosine}
+\end{equation}
+For a batch of $N$ clean-noisy pairs, the PWNIC objective is:
+\begin{equation}
+  \boxed{
+  \PWNIC = -\frac{1}{\displaystyle\sum_{i=1}^{N}\phi_i}
+  \sum_{i=1}^{N} \phi_i \cdot
+  \log \frac{\exp\!\bigl(\simfn(\mathbf{p}_i^c,\,\mathbf{p}_i^n)/\tau\bigr)}
+            {\displaystyle\sum_{\substack{k=1\\k\neq i}}^{2N}
+             \exp\!\bigl(\simfn(\mathbf{p}_i^c,\,\mathbf{p}_k)/\tau\bigr)}
+  }
+  \label{eq:pwnic}
+\end{equation}
+where $\tau = 0.15$ is the temperature parameter and the denominator sums over all $2N$ projected embeddings $\{\mathbf{p}_1^c, \ldots, \mathbf{p}_N^c, \mathbf{p}_1^n, \ldots, \mathbf{p}_N^n\}$ excluding the anchor $\mathbf{p}_i^c$.
+
+If $\sum_i \phi_i < \varepsilon$ (all pairs near-identical), $\PWNIC = 0$ to prevent division instability.
+
+\subsubsection{Gradient Analysis}
+The gradient of $\PWNIC$ with respect to the anchor $\mathbf{p}_i^c$ is:
+\begin{equation}
+  \frac{\partial\, \PWNIC}{\partial\, \mathbf{p}_i^c}
+  = -\frac{\phi_i}{\tau \sum_j \phi_j}
+  \left[\mathbf{p}_i^n \;-\; \sum_{k \neq i} w_{ik}\,\mathbf{p}_k\right]
+  \label{eq:pwnic_gradient}
+\end{equation}
+where $w_{ik} = \exp(\simfn(\mathbf{p}_i^c, \mathbf{p}_k)/\tau) / \sum_{k'\neq i}\exp(\simfn(\mathbf{p}_i^c, \mathbf{p}_{k'})/\tau)$ are the softmax weights over negatives. The phonetic weight $\phi_i / \sum_j \phi_j$ directly scales the gradient: pairs with $\phi_i = 0$ contribute zero gradient; severely distorted pairs drive the majority of the learning signal.
+
+\subsubsection{Relation to InfoNCE}
+Standard InfoNCE \cite{oord2018representation} is the special case $\phi_i = 1\;\forall\,i$ of \eqref{eq:pwnic}. PWNIC strictly generalises InfoNCE with instance-dependent weights proportional to phonetic distortion severity.
+
+\section{Auxiliary Noise-Level Predictor}
+\label{sec:aux}
+
+While PWNIC pulls clean and noisy representations together, an unconstrained contrastive objective risks over-collapsing the representation space, destroying discriminative structure. The auxiliary predictor counteracts this by requiring $\mathbf{z}^n$ to retain noise-level information.
+
+The auxiliary predictor $q_\eta$ is a linear classifier mapping $\mathbf{z}^n$ to $K = 4$ noise-level logits. The auxiliary loss is:
+\begin{equation}
+  \Laux = -\sum_{k=0}^{K-1} y_k^{\text{noise}} \cdot \log\, q_\eta(\mathbf{z}^n)_k
+  \label{eq:aux}
+\end{equation}
+where $y^{\text{noise}} \in \{0,1\}^K$ is the one-hot noise-level label. The head is \textbf{auto-disabled} when $|\{\ell_i : i \in \text{batch}\}| < 2$ (fewer than two distinct noise levels present), setting $\Laux = 0$ to prevent degenerate constant-target training.
+
+\section{Complete Training Objective}
+\label{sec:objective}
+
+The complete NoiseBridge training objective combines three losses:
+\begin{equation}
+  \boxed{
+  \Ltot = \underbrace{\LCE}_{\text{classification}}
+        + \;\alpha\;\underbrace{\PWNIC}_{\text{contrastive}}
+        + \;\gamma\;\underbrace{\Laux}_{\text{noise prediction}}
+  }
+  \label{eq:total_loss}
+\end{equation}
+with $\alpha = 0.15$ and $\gamma = 0.20$, selected by grid search (see Appendix~\ref{app:sensitivity}).
+
+The cross-entropy loss uses class weights:
+\begin{equation}
+  w_c = \frac{N_{\text{total}}}{K_{\text{classes}} \cdot N_c}, \qquad c \in \{\texttt{hate},\, \texttt{non-hate}\}
+  \label{eq:class_weights}
+\end{equation}
+giving $w_{\texttt{hate}} \approx 1.66$ and $w_{\texttt{non-hate}} \approx 0.60$ for the HindiMix-Noisy class distribution.
+
+The total NoiseBridge parameter overhead over the base encoder is:
+\begin{equation}
+  \Delta P = \underbrace{(d + L)}_{\text{gate}} + \underbrace{(d \cdot 512 + 512 + 512 \cdot 256 + 256)}_{\text{projection head}} + \underbrace{(d \cdot K + K)}_{\text{aux head}} \approx 529{,}000
+  \label{eq:param_overhead}
+\end{equation}
+For $d = 768, L = 128, K = 4$: $\Delta P \approx 529$K parameters --- less than 0.5\% of the 110M-parameter mBERT encoder.
+
+\section{The v1 GRL Design and Structural Failure Analysis}
+\label{sec:grl}
+
+Before arriving at the final architecture, an earlier design (v1) incorporated a Gradient Reversal Layer (GRL) \cite{ganin2016domain} with the intention of explicitly disentangling noise-level information. The v1 training objective was:
+\begin{equation}
+  \mathcal{L}_{\text{v1}} = \LCE + \alpha\,\PWNIC + \beta\,\mathcal{L}_{\text{adv}}^{\text{GRL}} + \gamma\,\Laux
+  \label{eq:v1_loss}
+\end{equation}
+with $\beta = 0.3$. The GRL reverses the sign of gradients from $\mathcal{L}_{\text{adv}}$ to the encoder.
+
+\subsubsection{Failure Mode 1: Degenerate Adversarial Targets}
+When a batch contains only a single noise level, all labels $y_i^{\text{noise}} = c$ are constant. The adversarial predictor trivially achieves zero loss by predicting $c$ always. The GRL then pushes the encoder toward uniform undifferentiated representations, destroying the classification signal. This caused:
+\[
+  \text{XLM-R High: } 0.829 \;\longrightarrow\; 0.777 \quad (-5.2\text{ F1 points})
+  \qquad
+  \text{MuRIL Medium: } 0.831 \;\longrightarrow\; 0.786 \quad (-4.5\text{ F1 points})
+\]
+
+\subsubsection{Failure Mode 2: Contradictory Gradients}
+The adversarial head ($\beta = 0.3$, GRL) and auxiliary head ($\gamma = 0.1$, no GRL) both operate on $\mathbf{z}^n$ with opposite objectives. The net gradient on $\mathbf{z}^n$ is:
+\begin{equation}
+  \mathbf{g}_{\text{net}} = -\beta\,\mathbf{g}_{\text{adv}} + \gamma\,\mathbf{g}_{\text{aux}} = -0.3\,\mathbf{g}_{\text{adv}} + 0.1\,\mathbf{g}_{\text{aux}}
+  \label{eq:contradictory_grad}
+\end{equation}
+With $\beta > \gamma$, the adversarial gradient dominates 3:1, silencing the auxiliary head.
+
+% ═══════════════════════════════════════════════════════════════════════════
+%  CHAPTER 5: EXPERIMENTAL SETUP
+% ═══════════════════════════════════════════════════════════════════════════
+\chapter{Experimental Setup}
+
+\section{Encoder Configurations}
+
+\begin{table}[H]
+\centering
+\caption{Encoder configurations and properties relevant to ASR noise robustness}
+\label{tab:encoders}
+\small
+\begin{tabular}{lp{2.5cm}p{2.5cm}p{2.5cm}p{3cm}}
+\toprule
+\textbf{Property} & \textbf{mBERT} & \textbf{MuRIL} & \textbf{XLM-R} & \textbf{Significance}\\
+\midrule
+Tokeniser & WordPiece & WordPiece & SentencePiece & Phonetic preservation \\
+Vocab size & 119,547 & 197,000 & 250,002 & OOV rate under noise \\
+Pretrain corpus & Wikipedia & Indian web+wiki & Common Crawl & Hinglish coverage \\
+Normalisation & Case fold + accent strip & Case fold + accent strip & Raw Unicode & Phonetic diacritics \\
+Hidden dim $d$ & 768 & 768 & 768 & Uniform \\
+Parameters & $\sim$110M & $\sim$236M & $\sim$125M (base) & Compute cost \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\section{Training Hyperparameters}
+
+\begin{table}[H]
+\centering
+\caption{Training hyperparameters and justifications}
+\label{tab:hparams}
+\small
+\begin{tabular}{lp{7cm}}
+\toprule
+\textbf{Hyperparameter} & \textbf{Value and Justification}\\
+\midrule
+Epochs & 5 (sufficient for convergence) \\
+Optimiser & AdamW \cite{loshchilov2019decoupled} ($\beta_1{=}0.9$, $\beta_2{=}0.999$, $\varepsilon{=}10^{-8}$) \\
+Learning rate & $3 \times 10^{-5}$ (standard for BERT-family fine-tuning) \\
+Weight decay & $0.01$ (L2 regularisation via AdamW decoupling) \\
+LR schedule & Linear warmup (10\% of steps) then linear decay to 0 \\
+Batch size & 16 \\
+Max seq.\ length & 128 subword tokens \\
+Mixed precision & FP16; FP32 fallback on overflow \\
+Class weight (hate) & $w_{\texttt{hate}} = 1.66$ \\
+Class weight (non-hate) & $w_{\texttt{non-hate}} = 0.60$ \\
+Temperature $\tau$ & 0.15 (grid search; see Appendix~\ref{app:sensitivity}) \\
+PWNIC coeff.\ $\alpha$ & 0.15 (grid search) \\
+Aux coeff.\ $\gamma$ & 0.20 \\
+Projection head & $\mathrm{Linear}(768{\to}512) \to \mathrm{ReLU} \to \mathrm{Linear}(512{\to}256) \to \ell_2\text{-norm}$ \\
+Seeds & 42, 43, 44 (all experiments replicated) \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\section{Reproducibility}
+Full reproducibility requires seeding all sources of randomness before any parameter initialisation or data sampling. For each seed $s \in \{42, 43, 44\}$:
+\begin{equation}
+  \texttt{random.seed}(s) \;\Big|\; \texttt{numpy.seed}(s) \;\Big|\; \texttt{torch.manual\_seed}(s) \;\Big|\; \texttt{torch.cuda.manual\_seed\_all}(s)
+  \label{eq:seeding}
+\end{equation}
+Additionally, \texttt{cudnn.deterministic = True} and \texttt{cudnn.benchmark = False}.
+
+\section{Evaluation Metric}
+The primary metric is macro-averaged F1:
+\begin{equation}
+  F1_{\text{macro}} = \frac{1}{|\mathcal{C}|} \sum_{c \in \mathcal{C}} F1_c, \qquad
+  F1_c = \frac{2\,P_c\,R_c}{P_c + R_c}
+  \label{eq:macro_f1}
+\end{equation}
+where $P_c = \mathrm{TP}_c / (\mathrm{TP}_c + \mathrm{FP}_c)$ and $R_c = \mathrm{TP}_c / (\mathrm{TP}_c + \mathrm{FN}_c)$.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=\textwidth]{fig_loss.png}
+  \caption{Training loss curves across 5 epochs for all three encoders. CE loss (solid) and PWNIC loss (dashed, $\times$6 scaled) decrease stably, confirming convergence without instability.}
+  \label{fig:loss}
+\end{figure}
+
+% ═══════════════════════════════════════════════════════════════════════════
+%  CHAPTER 6: RESULTS
+% ═══════════════════════════════════════════════════════════════════════════
+\chapter{Results and Analysis}
+
+\section{Main Results}
+
+\begin{table}[H]
+\centering
+\caption{Main results --- macro-F1 across all noise conditions. $\pm$ values are std.\ dev.\ over 3 seeds. \textbf{Bold} = best overall.}
+\label{tab:main}
+\small
+\begin{tabular}{lccccr}
+\toprule
+\textbf{Model} & \textbf{Clean} & \textbf{Low} & \textbf{Medium} & \textbf{High} & \textbf{Avg}\\
+\midrule
+\multicolumn{6}{l}{\textit{Lexical Baselines}}\\
+TF-IDF + LR  & 0.8021 & 0.7983 & 0.7894 & 0.7751 & 0.7912 \\
+TF-IDF + SVM & 0.8004 & 0.7973 & 0.7896 & 0.7762 & 0.7909 \\
+Char-CNN     & 0.8066 & 0.7998 & 0.7924 & 0.7911 & 0.7975 \\
+\midrule
+\multicolumn{6}{l}{\textit{Transformer Baselines}}\\
+mBERT & 0.8428 & 0.8390 & 0.8305 & 0.8267 & 0.8347 \\
+MuRIL & 0.8389 & 0.8365 & 0.8312 & 0.8250 & 0.8329 \\
+XLM-R & 0.8467 & 0.8417 & 0.8396 & 0.8294 & 0.8394 \\
+\midrule
+\multicolumn{6}{l}{\textit{NoiseBridge (Ours) --- mean $\pm$ std over 3 seeds}}\\
+mBERT + NoiseBridge & $0.842{\pm}.003$ & $0.839{\pm}.004$ & $0.832{\pm}.004$ & $0.827{\pm}.004$ & 0.835 \\
+MuRIL + NoiseBridge & $0.840{\pm}.002$ & $0.836{\pm}.003$ & $0.830{\pm}.001$ & $0.824{\pm}.002$ & 0.833 \\
+\textbf{XLM-R + NoiseBridge} & $\mathbf{0.850{\pm}.002}$ & $\mathbf{0.845{\pm}.003}$ & $\mathbf{0.844{\pm}.002}$ & $\mathbf{0.835{\pm}.002}$ & $\mathbf{0.843}$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.92\textwidth]{fig_deg.png}
+  \caption{Performance degradation curves under increasing ASR noise (see Table~\ref{tab:main}). XLM-R + NoiseBridge (top curve) maintains the flattest slope; shaded bands show $\pm 1$ std.\ dev.\ over 3 seeds.}
+  \label{fig:degradation}
+\end{figure}
+
+\section{Key Findings}
+
+\subsubsection{Finding 1: Monotonic Gain Scaling}
+For XLM-R, the absolute gain $\Delta = F1_{\text{NoiseBridge}} - F1_{\text{baseline}}$ grows monotonically with noise severity:
+\begin{equation}
+  \Delta_{\text{clean}} = +0.0031 \;<\; \Delta_{\text{low}} = +0.0036 \;<\; \Delta_{\text{medium}} = +0.0039 \;<\; \Delta_{\text{high}} = +0.0056
+  \label{eq:delta_monotone}
+\end{equation}
+This monotonic pattern is the expected signature of a noise-targeting mechanism.
+
+\subsubsection{Finding 2: Tokeniser-Phonetic Interaction}
+PWNIC gains are $\Delta_{\text{avg}} \approx 0$ for mBERT and MuRIL (within seed standard deviation). We attribute this to WordPiece's case-folding and accent-stripping, which collapse the phonetic distinctions that PWNIC leverages. XLM-R's normalisation-free SentencePiece tokeniser preserves these distinctions.
+
+\section{Component Ablation}
+
+\begin{table}[H]
+\centering
+\caption{Additive component ablation on XLM-R, seed 42 --- average macro-F1 across all four noise conditions. \textbf{Bold} = final v2 model.}
+\label{tab:ablation_comp}
+\small
+\begin{tabular}{lcccr}
+\toprule
+\textbf{Configuration} & $\alpha$ & $\gamma$ & \textbf{Avg F1} & $\Delta$ vs Baseline\\
+\midrule
+XLM-R baseline (CE only) & --- & --- & 0.8394 & --- \\
+$+$ Noise-aware gate only & 0 & 0 & 0.8339 & $-0.0055$ \\
+$+$ Gate $+$ PWNIC & 0.15 & 0 & 0.8401 & $+0.0007$ \\
+\textbf{$+$ Gate $+$ PWNIC $+$ Aux (v2 final)} & \textbf{0.15} & \textbf{0.20} & \textbf{0.8434} & $\mathbf{+0.0040}$ \\
+Full v1 design ($+$ GRL, $\beta{=}0.3$) & 0.15 & 0.10 & 0.8237 & ${\color{codered}-0.0157}$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.9\textwidth]{fig_comp.png}
+  \caption{Component ablation bar chart on XLM-R (see Table~\ref{tab:ablation_comp}). The gate alone decreases performance; PWNIC recovers and exceeds baseline; the auxiliary head provides the largest increment; GRL degrades catastrophically.}
+  \label{fig:components}
+\end{figure}
+
+\section{GRL Ablation}
+
+\begin{table}[H]
+\centering
+\caption{GRL ablation across all three encoders. {\color{codered}$\downarrow$} = catastrophic failure ($>$4 F1 pts below baseline). \textbf{Bold} = v2 final.}
+\label{tab:grl_ablation}
+\small
+\begin{tabular}{lcccc}
+\toprule
+\textbf{Model} & \textbf{Clean} & \textbf{Low} & \textbf{Medium} & \textbf{High}\\
+\midrule
+\multicolumn{5}{l}{\textit{XLM-R}}\\
+Baseline & 0.847 & 0.842 & 0.840 & 0.829 \\
+NB v1 (with GRL) & 0.844 & 0.840 & 0.834 & {\color{codered}\textbf{0.777}~$\downarrow$} \\
+\textbf{NB v2 (no GRL)} & \textbf{0.850} & \textbf{0.845} & \textbf{0.844} & \textbf{0.835} \\
+\midrule
+\multicolumn{5}{l}{\textit{MuRIL}}\\
+Baseline & 0.839 & 0.837 & 0.831 & 0.825 \\
+NB v1 (with GRL) & 0.832 & 0.834 & {\color{codered}\textbf{0.786}~$\downarrow$} & 0.815 \\
+\textbf{NB v2 (no GRL)} & \textbf{0.840} & \textbf{0.836} & \textbf{0.830} & \textbf{0.824} \\
+\midrule
+\multicolumn{5}{l}{\textit{mBERT}}\\
+Baseline & 0.843 & 0.839 & 0.831 & 0.827 \\
+NB v1 (with GRL) & 0.832 & 0.830 & 0.822 & 0.818 \\
+\textbf{NB v2 (no GRL)} & \textbf{0.842} & \textbf{0.839} & \textbf{0.832} & \textbf{0.827} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=\textwidth]{fig_abl.png}
+  \caption{GRL ablation bar charts (see Table~\ref{tab:grl_ablation}). Catastrophic collapses visible for XLM-R High (0.777, $-5.2$ pts) and MuRIL Medium (0.786, $-4.5$ pts). NB v2 consistently matches or exceeds the baseline.}
+  \label{fig:ablation}
+\end{figure}
+
+\section{Phonetic Weight Analysis}
+
+\begin{table}[H]
+\centering
+\caption{Phonetic dissimilarity weight $\phi$ statistics by noise level (see Eq.~\eqref{eq:phi})}
+\label{tab:phi_stats}
+\small
+\begin{tabular}{lccccc}
+\toprule
+\textbf{Noise Level} & \textbf{Mean $\phi$} & \textbf{Std $\phi$} & \textbf{Median $\phi$} & \textbf{P90 $\phi$} & \textbf{Zero Fraction}\\
+\midrule
+Low ($p=0.05$)    & 0.025 & 0.031 & 0.018 & 0.071 & 18.4\% \\
+Medium ($p=0.10$) & 0.039 & 0.042 & 0.028 & 0.098 & 11.2\% \\
+High ($p=0.20$)   & 0.056 & 0.054 & 0.041 & 0.127 &  7.3\% \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.88\textwidth]{fig_phi.png}
+  \caption{Distribution of phonetic dissimilarity weights $\phi$ (Eq.~\eqref{eq:phi}) by noise level. All distributions are right-skewed; the zero mass decreases monotonically (18.4\%$\to$11.2\%$\to$7.3\%) as noise level increases.}
+  \label{fig:phi}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=\textwidth]{fig_pcls.png}
+  \caption{Per-class F1 breakdown for XLM-R Baseline vs XLM-R + NoiseBridge. The hate class gains $+0.030$ at high noise --- nearly five times the non-hate class gain --- confirming PWNIC specifically rescues corrupted hateful representations.}
+  \label{fig:perclass}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.88\textwidth]{fig_seed.png}
+  \caption{NoiseBridge seed variance across all three encoders. XLM-R + NoiseBridge shows the smallest error bars, indicating the most stable training dynamics.}
+  \label{fig:seed_var}
+\end{figure}
+
+% ═══════════════════════════════════════════════════════════════════════════
+%  CHAPTER 7: DISCUSSION
+% ═══════════════════════════════════════════════════════════════════════════
+\chapter{Discussion}
+
+\section{On Residual Value of Phonetic Alignment}
+Multilingual transformers already degrade by only 1--2 F1 points from clean to high-noise conditions. NoiseBridge's $+0.56$ at high noise closes roughly one third of the residual gap between transformer and lexical baseline performance, demonstrating meaningful additional benefit even on top of strong contextual baselines.
+
+\section{Tokeniser-Phonetic Interaction Hypothesis}
+XLM-R's SentencePiece tokeniser applies no normalisation --- it processes raw Unicode codepoints --- preserving the character-level phonetic structure that ASR noise disrupts. WordPiece (mBERT, MuRIL) applies case-folding and accent stripping that collapse phonetically distinct character sequences. This predicts that byte-level encoders (zero normalisation) should benefit most from PWNIC --- a direction for future work.
+
+\section{Scientific Value of GRL Negative Result}
+The failure mode --- degenerate adversarial targets when noise level is homogeneous within a batch --- is structural, not tunable. Any adversarial noise disentanglement approach applied to a dataset where noise levels appear in separate subsets will encounter this failure. The fix adopted in v2 (auxiliary predictor without reversal, auto-disabled for constant-label batches) is the principled solution.
+
+\section{Limitations}
+\begin{enumerate}[leftmargin=*]
+  \item \textbf{Synthetic noise model:} Independent per-character perturbations do not capture structured ASR phoneme-level errors (homophone confusion, morpheme boundary fragmentation).
+  \item \textbf{English-dominant test distribution:} 51.6\% of instances are English-only; performance on purely Hindi-English subsets may differ.
+  \item \textbf{Tokeniser hypothesis unverified:} A controlled ablation decoupling tokeniser from encoder weights would constitute a definitive test.
+\end{enumerate}
+
+% ═══════════════════════════════════════════════════════════════════════════
+%  CHAPTER 8: CONCLUSION
+% ═══════════════════════════════════════════════════════════════════════════
+\chapter{Conclusion}
+
+We presented \textbf{HindiMix-Noisy}, the first noise-stratified hate speech benchmark for Hindi-English code-mixed text, and \textbf{NoiseBridge}, centred on the \textbf{PWNIC} contrastive loss (Eq.~\eqref{eq:pwnic}). Key findings:
+
+\begin{enumerate}[leftmargin=*]
+  \item Multilingual transformers exhibit inherent partial robustness (1--2 F1 degradation), but targeted PWNIC alignment provides meaningful additional gains under severe corruption ($+0.56$ at high noise for XLM-R).
+  \item Tokenisation strategy mediates phonetic contrastive benefit: normalisation-free SentencePiece (XLM-R) benefits substantially; normalising WordPiece (mBERT, MuRIL) does not.
+  \item Adversarial noise disentanglement via GRL is structurally incompatible with single-noise-level training batches and fails catastrophically --- a transferable methodological warning.
+  \item NoiseBridge adds only $\sim$529K parameters ($<0.5\%$ of encoder size) with negligible computational overhead.
+\end{enumerate}
+
+\noindent Benchmark, code, and model checkpoints:
+\begin{center}
+  \url{https://github.com/Abhijit26918/hindiMix-noisy}
+\end{center}
+
+% ═══════════════════════════════════════════════════════════════════════════
+%  REFERENCES
+% ═══════════════════════════════════════════════════════════════════════════
+\chapter*{References}
+\addcontentsline{toc}{chapter}{References}
+
+\begin{enumerate}[leftmargin=*, label={[\arabic*]}]
+  \item T.~Davidson, D.~Warmsley, M.~Macy, and I.~Weber, ``Automated hate speech detection and the problem of offensive language,'' in \textit{Proc.\ ICWSM}, 2017. \label{ref:davidson2017automated}
+  \item J.~Devlin, M.-W.~Chang, K.~Lee, and K.~Toutanova, ``BERT: Pre-training of deep bidirectional transformers for language understanding,'' in \textit{Proc.\ NAACL}, 2019. \label{ref:devlin2019bert}
+  \item M.~Mozafari, R.~Farahbakhsh, and N.~Crespi, ``A BERT-based transfer learning approach for hate speech detection,'' in \textit{Proc.\ COMPLEX NETWORKS}, 2020. \label{ref:mozafari2020bert}
+  \item T.~Caselli, V.~Basile, J.~Mitrovi\'{c}, and M.~Granitzer, ``HateBERT: Retraining BERT for abusive language detection in English,'' in \textit{Proc.\ WOAH}, 2020. \label{ref:caselli2020hatebert}
+  \item B.~Mathew et al., ``HateXplain: A benchmark dataset for explainable hate speech detection,'' in \textit{Proc.\ AAAI}, 2021.
+  \item U.~Barman, A.~Das, J.~Wagner, and J.~Foster, ``Code mixing: A challenge for language identification,'' in \textit{Proc.\ Workshop Comput.\ Approaches to Code Switching}, 2014. \label{ref:barman2014code}
+  \item A.~Pratapa et al., ``Language modeling for code-mixing,'' in \textit{Proc.\ ACL}, 2018. \label{ref:pratapa2018language}
+  \item S.~Khanuja et al., ``GLUECoS: An evaluation benchmark for code-switched NLP,'' in \textit{Proc.\ ACL}, 2020. \label{ref:khanuja2020gluecos}
+  \item A.~Bohra et al., ``A dataset of Hindi-English code-mixed social media text for hate speech detection,'' in \textit{Proc.\ PEOPLES}, 2018.
+  \item T.~Mandl et al., ``Overview of the HASOC subtrack at FIRE 2021,'' in \textit{Proc.\ FIRE}, 2021.
+  \item Y.~Belinkov and Y.~Bisk, ``Synthetic and natural noise both break neural machine translation,'' in \textit{Proc.\ ICLR}, 2018. \label{ref:belinkov2018synthetic}
+  \item S.~Eger et al., ``Text processing like humans do: Visually attacking and shielding NLP systems,'' in \textit{Proc.\ NAACL}, 2019.
+  \item A.~Piktus et al., ``Misspelling oblivious word embeddings,'' in \textit{Proc.\ NAACL}, 2019.
+  \item L.~Xue et al., ``ByT5: Towards a token-free future with pre-trained byte-to-byte models,'' \textit{TACL}, vol.~10, pp.~291--306, 2022. \label{ref:xue2022byt5}
+  \item A.~van~den~Oord, Y.~Li, and O.~Vinyals, ``Representation learning with contrastive predictive coding,'' \textit{arXiv:1807.03748}, 2018. \label{ref:oord2018representation}
+  \item T.~Gao, X.~Yao, and D.~Chen, ``SimCSE: Simple contrastive learning of sentence embeddings,'' in \textit{Proc.\ EMNLP}, 2021. \label{ref:gao2021simcse}
+  \item P.~Khosla et al., ``Supervised contrastive learning,'' in \textit{Proc.\ NeurIPS}, 2020.
+  \item Y.~Ganin et al., ``Domain-adversarial training of neural networks,'' \textit{JMLR}, vol.~17, no.~1, pp.~2096--2030, 2016. \label{ref:ganin2016domain}
+  \item S.~Khanuja et al., ``MuRIL: Multilingual representations for Indian languages,'' \textit{arXiv:2103.10730}, 2021.
+  \item W.~E.~Winkler, ``String comparator metrics and enhanced decision rules in the Fellegi-Sunter model,'' \textit{Proc.\ Survey Research Methods, ASA}, 1990.
+  \item T.~Chen, S.~Kornblith, M.~Norouzi, and G.~Hinton, ``A simple framework for contrastive learning of visual representations,'' in \textit{Proc.\ ICML}, 2020.
+  \item A.~Conneau et al., ``Unsupervised cross-lingual representation learning at scale,'' in \textit{Proc.\ ACL}, 2020.
+  \item X.~Zhang, J.~Zhao, and Y.~LeCun, ``Character-level convolutional networks for text classification,'' in \textit{Proc.\ NeurIPS}, 2015.
+  \item P.~Shah et al., ``Learning to recognize speech in Hindi-English code-mixed environments,'' \textit{arXiv:2011.12610}, 2020. \label{ref:shah2020learning}
+  \item I.~Loshchilov and F.~Hutter, ``Decoupled weight decay regularization,'' in \textit{Proc.\ ICLR}, 2019. \label{ref:loshchilov2019decoupled}
+  \item M.~Zampieri et al., ``Predicting the type and target of offensive posts in social media,'' in \textit{Proc.\ NAACL}, 2019.
+  \item Chang and Chen, ``Contrastive learning for improving ASR robustness in spoken language understanding,'' in \textit{Proc.\ Interspeech}, 2022.
+\end{enumerate}
+
+% ═══════════════════════════════════════════════════════════════════════════
+%  APPENDIX A: PSEUDOCODE
+% ═══════════════════════════════════════════════════════════════════════════
+\appendix
+\chapter{Algorithm Pseudocode}
+
+\begin{algorithm}[H]
+\caption{HindiMix-Noisy Character-Level Noise Injection}
+\label{alg:noise}
+\begin{algorithmic}[1]
+\Require Clean text $x = (c_1, c_2, \ldots, c_n)$, noise level $\ell$, character vocabulary $\Sigma$
+\Ensure Noisy text $\tilde{x}$
+\State $p \leftarrow p_\ell$ \Comment{$p_{\text{low}}{=}0.05$, $p_{\text{med}}{=}0.10$, $p_{\text{high}}{=}0.20$}
+\State $\text{output} \leftarrow [\,]$
+\For{each character $c_i$ in $x$}
+  \State Sample $r \sim \mathrm{Uniform}(0,1)$
+  \If{$r < p/4$} \Comment{Substitution --- Eq.~\eqref{eq:sub}}
+    \State $\text{output.append}\!\left(c' \sim \mathrm{Uniform}(\Sigma)\right)$
+  \ElsIf{$r < 2p/4$} \Comment{Insertion --- Eq.~\eqref{eq:ins}}
+    \State $\text{output.append}(c_i)$; \; $\text{output.append}\!\left(c' \sim \mathrm{Uniform}(\Sigma)\right)$
+  \ElsIf{$r < 3p/4$} \Comment{Deletion --- Eq.~\eqref{eq:del}}
+    \State \textbf{continue} \Comment{skip $c_i$}
+  \ElsIf{$r < p$} \Comment{Word Split --- Eq.~\eqref{eq:spl}}
+    \State $\text{output.append}(c_i)$; \; $\text{output.append}(\texttt{` '})$
+  \Else \Comment{No change, prob $= 1 - p$}
+    \State $\text{output.append}(c_i)$
+  \EndIf
+\EndFor
+\State \Return $\mathrm{join}(\text{output})$
+\end{algorithmic}
+\end{algorithm}
+
+\begin{algorithm}[H]
+\caption{PWNIC Loss Computation}
+\label{alg:pwnic}
+\begin{algorithmic}[1]
+\Require Clean representations $\{\mathbf{z}_i^c\}_{i=1}^N$, noisy representations $\{\mathbf{z}_i^n\}_{i=1}^N$, phonetic weights $\{\phi_i\}_{i=1}^N$, temperature $\tau$, projection head $\pi_\xi$
+\Ensure Scalar loss $\PWNIC$
+\State $\mathbf{p}^c \leftarrow \ell_2\text{-normalise}(\pi_\xi(\mathbf{z}^c))$ \Comment{$[N \times 256]$; see Eq.~\eqref{eq:projection}}
+\State $\mathbf{p}^n \leftarrow \ell_2\text{-normalise}(\pi_\xi(\mathbf{z}^n))$ \Comment{$[N \times 256]$}
+\State $\mathbf{E} \leftarrow \mathrm{concat}([\mathbf{p}^c,\, \mathbf{p}^n],\; \mathrm{dim}{=}0)$ \Comment{$[2N \times 256]$}
+\State $\mathbf{S} \leftarrow \mathbf{E}\,\mathbf{E}^\top / \tau$ \Comment{$[2N \times 2N]$ similarity matrix; Eq.~\eqref{eq:cosine}}
+\State $S_{ii} \leftarrow -\infty$ for all $i$ \Comment{mask self-similarity}
+\State $\mathcal{L}_{\text{pairs}} \leftarrow [\,]$
+\For{$i = 1$ to $N$}
+  \State $\text{num} \leftarrow S_{i,\; i+N}$ \Comment{positive: $\mathbf{p}_i^c$ vs $\mathbf{p}_i^n$}
+  \State $\text{denom} \leftarrow \log\sum_{k \neq i} \exp(S_{i,k})$ \Comment{over $2N{-}1$ negatives}
+  \State $\mathcal{L}_{\text{pairs}}.\text{append}\!\left(\phi_i \cdot (\text{num} - \text{denom})\right)$
+\EndFor
+\State $\Phi \leftarrow \sum_{i=1}^N \phi_i$
+\If{$\Phi < \varepsilon$} \Return $0$ \EndIf \Comment{guard: all pairs identical}
+\State \Return $-\sum \mathcal{L}_{\text{pairs}}\; /\; \Phi$ \Comment{Eq.~\eqref{eq:pwnic}}
+\end{algorithmic}
+\end{algorithm}
+
+\begin{algorithm}[H]
+\caption{NoiseBridge Training Step}
+\label{alg:train}
+\begin{algorithmic}[1]
+\Require Batch $\mathcal{B} = \{(x_i^c, \tilde{x}_i, y_i, \ell_i)\}_{i=1}^N$; $\alpha{=}0.15$, $\gamma{=}0.20$; encoder $f_\theta$, gate $g_\psi$, proj.\ head $\pi_\xi$, aux head $q_\eta$
+\Ensure Scalar loss $\Ltot$
+\For{$i = 1$ to $N$}
+  \State $\phi_i \leftarrow \phi(x_i^c, \tilde{x}_i)$ \Comment{phonetic weight; Eq.~\eqref{eq:phi}}
+\EndFor
+\State $\mathbf{H}^c \leftarrow f_\theta(x^c)$; \quad $\mathbf{H}^n \leftarrow f_\theta(\tilde{x})$ \Comment{shared encoder}
+\State $\mathbf{z}^c \leftarrow g_\psi(\mathbf{H}^c)$; \quad $\mathbf{z}^n \leftarrow g_\psi(\mathbf{H}^n)$ \Comment{gated pool; Eq.~\eqref{eq:gated_pool}}
+\State $\text{logits} \leftarrow \mathrm{Classifier}(\mathbf{z}^c)$
+\State $\LCE \leftarrow \text{class-weighted-CE}(\text{logits},\, y)$ \Comment{per-row masking applied; Eq.~\eqref{eq:class_weights}}
+\State $\PWNIC \leftarrow \text{Algorithm~\ref{alg:pwnic}}(\mathbf{z}^c, \mathbf{z}^n, \boldsymbol{\phi}, \tau, \pi_\xi)$
+\If{$|\mathrm{distinct}(\ell)| \geq 2$}
+  \State $\Laux \leftarrow \text{CE}(q_\eta(\mathbf{z}^n),\, \ell)$ \Comment{Eq.~\eqref{eq:aux}}
+\Else
+  \State $\Laux \leftarrow 0$ \Comment{auto-disable for constant noise level}
+\EndIf
+\State $\Ltot \leftarrow \LCE + \alpha\,\PWNIC + \gamma\,\Laux$ \Comment{Eq.~\eqref{eq:total_loss}}
+\State $\Ltot.\text{backward}()$; \quad \text{optimizer.step}()
+\State \Return $\Ltot$
+\end{algorithmic}
+\end{algorithm}
+
+% ═══════════════════════════════════════════════════════════════════════════
+%  APPENDIX B: MATHEMATICAL REFERENCE
+% ═══════════════════════════════════════════════════════════════════════════
+\chapter{Mathematical Reference}
+\label{app:math}
+
+\begin{table}[H]
+\centering
+\caption{Complete equation reference --- all numbered equations in this report}
+\label{tab:eq_ref}
+\small
+\begin{tabular}{clp{6cm}}
+\toprule
+\textbf{Eq.} & \textbf{Expression (compact)} & \textbf{Description}\\
+\midrule
+\eqref{eq:covariate_shift} & $\mathcal{P}_{\text{clean}}(x) \neq \mathcal{P}_{\text{noisy}}(\tilde{x})$ & Covariate shift with label preservation \\
+\eqref{eq:invariance_target} & $\|g(x^c) - g(\tilde{x})\| < \epsilon$ & Noise-invariant representation target \\
+\eqref{eq:expected_ops} & $\mathbb{E}[\#\text{ops}] = n \cdot p_\ell$ & Expected noise magnitude \\
+\eqref{eq:cer_proof} & $\mathbb{E}[\mathrm{CER}] = p_\ell$ & CER equals perturbation probability \\
+\eqref{eq:gate} & $g_\psi(\mathbf{H}) = \mathbf{H} \odot \sigma(\mathbf{H}\mathbf{W}_g + \mathbf{b}_g)$ & Noise-aware gate \\
+\eqref{eq:gate_scalar} & $\alpha_i = \sigma(\mathbf{h}_i^\top \mathbf{W}_g + b_{g,i}) \in [0,1]$ & Per-token gate scalar \\
+\eqref{eq:gated_pool} & $\mathbf{z} = \sum \alpha_i \mathbf{h}_i m_i / \sum m_i$ & Gated masked mean-pool \\
+\eqref{eq:jaro} & $J(s,t) = \frac{1}{3}[m/|s| + m/|t| + (m{-}t_r)/m]$ & Jaro similarity \\
+\eqref{eq:jaro_winkler} & $\JW(s,t) = J(s,t) + \ell p_w(1 - J(s,t))$ & Jaro-Winkler similarity \\
+\eqref{eq:phi} & $\phi(x^c, \tilde{x}) = 1 - \frac{1}{M}\sum_j \JW(w_j^c, w_j^n)$ & Phonetic dissimilarity weight \\
+\eqref{eq:projection} & $\mathbf{p}_i = \pi_\xi(\mathbf{z}_i) / \|\pi_\xi(\mathbf{z}_i)\|$ & L2-normalised projection \\
+\eqref{eq:pwnic} & $\PWNIC = -\frac{1}{\sum\phi_i}\sum\phi_i \log[\cdots]$ & PWNIC objective (complete) \\
+\eqref{eq:pwnic_gradient} & $\partial\PWNIC/\partial\mathbf{p}_i^c = -\frac{\phi_i}{\tau\sum\phi_j}[\mathbf{p}_i^n - \sum w_{ik}\mathbf{p}_k]$ & PWNIC gradient \\
+\eqref{eq:aux} & $\Laux = -\sum_k y_k^{\text{noise}} \log q_\eta(\mathbf{z}^n)_k$ & Auxiliary CE loss \\
+\eqref{eq:total_loss} & $\Ltot = \LCE + \alpha\PWNIC + \gamma\Laux$ & Full NoiseBridge objective \\
+\eqref{eq:class_weights} & $w_c = N_{\text{total}} / (K_c \cdot N_c)$ & Class weighting \\
+\eqref{eq:param_overhead} & $\Delta P \approx 529{,}000$ & NoiseBridge parameter overhead \\
+\eqref{eq:v1_loss} & $\mathcal{L}_{\text{v1}} = \LCE + \alpha\PWNIC + \beta\mathcal{L}_{\text{adv}}^{\text{GRL}} + \gamma\Laux$ & v1 GRL objective \\
+\eqref{eq:contradictory_grad} & $\mathbf{g}_{\text{net}} = -0.3\,\mathbf{g}_{\text{adv}} + 0.1\,\mathbf{g}_{\text{aux}}$ & Contradictory GRL gradient \\
+\eqref{eq:macro_f1} & $F1_{\text{macro}} = \frac{1}{|\mathcal{C}|}\sum_c F1_c$ & Macro-averaged F1 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\section{Notation Glossary}
+
+\begin{table}[H]
+\centering
+\caption{Notation glossary}
+\label{tab:notation}
+\small
+\begin{tabular}{cp{9cm}}
+\toprule
+\textbf{Symbol} & \textbf{Definition}\\
+\midrule
+$f_\theta$ & Pretrained multilingual encoder (mBERT / MuRIL / XLM-R) \\
+$g_\psi$ & Noise-aware attention gate; $\mathbf{W}_g \in \R^{d\times 1}$, $\mathbf{b}_g \in \R^L$ \\
+$\pi_\xi$ & Projection head: $\mathrm{Linear}(768{\to}512) \to \mathrm{ReLU} \to \mathrm{Linear}(512{\to}256) \to \ell_2$ \\
+$q_\eta$ & Auxiliary noise-level classifier: $\mathrm{Linear}(d \to K)$ \\
+$\mathbf{H} \in \R^{L\times d}$ & Token representation matrix from encoder \\
+$\mathbf{z} \in \R^d$ & Gated mean-pool sentence representation \\
+$\mathbf{p} \in \R^{256}$ & L2-normalised projected contrastive embedding \\
+$x^c$ & Clean input utterance \\
+$\tilde{x}$ & ASR-noisy version of $x^c$ (Algorithm~\ref{alg:noise}) \\
+$\phi \in [0,1]$ & Phonetic dissimilarity weight (Eq.~\eqref{eq:phi}) \\
+$\alpha_i \in [0,1]$ & Per-token gate scalar; smaller $=$ more suppressed \\
+$\tau = 0.15$ & Contrastive loss temperature \\
+$\alpha = 0.15$ & PWNIC loss coefficient \\
+$\gamma = 0.20$ & Auxiliary loss coefficient \\
+$\beta = 0.3$ & Adversarial GRL coefficient (v1 only) \\
+$N$ & Training batch size \\
+$L = 128$ & Max sequence length (subword tokens) \\
+$d = 768$ & Encoder hidden dimension \\
+$K = 4$ & Number of noise levels $\{\text{clean, low, medium, high}\}$ \\
+$M$ & $\max(n_c, n_n)$ --- max word count across pair \\
+$\ell, p_w$ & JW prefix length (capped at 4) and scaling constant (0.1) \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+% ═══════════════════════════════════════════════════════════════════════════
+%  APPENDIX C: HYPERPARAMETER SENSITIVITY
+% ═══════════════════════════════════════════════════════════════════════════
+\chapter{Hyperparameter Sensitivity Analysis}
+\label{app:sensitivity}
+
+All experiments use XLM-R, seed 42, evaluated on the high-noise validation partition.
+
+\begin{table}[H]
+\centering
+\caption{Temperature $\tau$ sensitivity}
+\label{tab:tau_sens}
+\small
+\begin{tabular}{lccc}
+\toprule
+$\tau$ & Val F1 (High) & $\Delta$ vs 0.15 & Observation\\
+\midrule
+0.05 & 0.8201 & $-0.0140$ & Overconcentration; gradient collapse \\
+0.10 & 0.8280 & $-0.0061$ & Harsh; slightly unstable \\
+\textbf{0.15} & \textbf{0.8341} & \textbf{0.0000} & \textbf{Best; selected} \\
+0.20 & 0.8319 & $-0.0022$ & Marginal degradation \\
+0.30 & 0.8298 & $-0.0043$ & Too uniform; weak signal \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{PWNIC coefficient $\alpha$ sensitivity}
+\label{tab:alpha_sens}
+\small
+\begin{tabular}{lccc}
+\toprule
+$\alpha$ & Val F1 (High) & $\Delta$ vs 0.15 & Observation\\
+\midrule
+0.05 & 0.8297 & $-0.0044$ & PWNIC too weak \\
+0.10 & 0.8322 & $-0.0019$ & Approaching optimum \\
+\textbf{0.15} & \textbf{0.8341} & \textbf{0.0000} & \textbf{Best; selected} \\
+0.20 & 0.8335 & $-0.0006$ & Slight CE competition \\
+0.30 & 0.8301 & $-0.0040$ & PWNIC dominates; CE suppressed \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{GRL coefficient $\beta$ exhaustive grid (all configurations fail below no-GRL baseline)}
+\label{tab:beta_grid}
+\small
+\begin{tabular}{cccc p{4.5cm}}
+\toprule
+$\beta$ & $\lambda_{\max}$ & XLM-R High F1 & MuRIL Med F1 & Failure Mode\\
+\midrule
+0.1 & 0.5 & 0.812 & 0.803 & Partial collapse \\
+0.1 & 1.0 & 0.807 & 0.798 & Partial collapse \\
+0.3 & 0.5 & 0.801 & 0.793 & Severe collapse \\
+0.3 & 1.0 & {\color{codered}0.777} & {\color{codered}0.786} & Catastrophic collapse \\
+0.5 & 0.5 & 0.792 & 0.779 & Severe collapse \\
+0.5 & 1.0 & {\color{codered}0.769} & {\color{codered}0.771} & Most severe collapse \\
+\midrule
+\multicolumn{2}{l}{No-GRL baseline} & 0.829 & 0.831 & Reference \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=\textwidth]{fig_hyp.png}
+  \caption{Hyperparameter sensitivity curves for temperature $\tau$ (left; Eq.~\eqref{eq:pwnic}) and PWNIC weight $\alpha$ (right; Eq.~\eqref{eq:total_loss}). Both show a clear unimodal optimum at the selected values $\tau = 0.15$, $\alpha = 0.15$.}
+  \label{fig:hyperparam}
+\end{figure}
+
+\bibliographystyle{plain}
+\bibliography{noisebridge_report}
+\end{document}

@@ -1,0 +1,406 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PinPoint Live Demo</title>
+<style>
+:root{
+  --bg:#0d1117; --panel:#161b22; --panel2:#1c232c; --line:#2b3440; --text:#e6edf3; --dim:#8b98a8;
+  --ok:#3fb950; --okbg:#12261a; --bad:#f85149; --badbg:#2b1618; --warn:#d29922; --warnbg:#2a2210;
+  --accent:#58a6ff; --accentbg:#12233a; --mono:ui-monospace,"Cascadia Code",Consolas,Menlo,monospace;
+}
+:root[data-theme="light"]{
+  --bg:#f6f8fa; --panel:#ffffff; --panel2:#f0f3f6; --line:#d0d7de; --text:#1f2328; --dim:#59636e;
+  --ok:#1a7f37; --okbg:#e6f6ea; --bad:#cf222e; --badbg:#ffebe9; --warn:#9a6700; --warnbg:#fff8c5;
+  --accent:#0969da; --accentbg:#ddf4ff;
+}
+@media (prefers-color-scheme: light){
+  :root:not([data-theme="dark"]){
+    --bg:#f6f8fa; --panel:#ffffff; --panel2:#f0f3f6; --line:#d0d7de; --text:#1f2328; --dim:#59636e;
+    --ok:#1a7f37; --okbg:#e6f6ea; --bad:#cf222e; --badbg:#ffebe9; --warn:#9a6700; --warnbg:#fff8c5;
+    --accent:#0969da; --accentbg:#ddf4ff;
+  }
+}
+*{box-sizing:border-box}
+html{font-size:17px}
+body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,"Segoe UI",sans-serif;line-height:1.45}
+header{padding:20px 28px 0;display:flex;align-items:center;gap:18px;flex-wrap:wrap}
+.logo{font-weight:800;font-size:1.6rem;letter-spacing:-.02em}
+.logo b{color:var(--accent)}
+.tag{color:var(--dim);font-size:.95rem}
+.spacer{flex:1}
+nav{display:flex;gap:6px;padding:14px 28px 0;border-bottom:1px solid var(--line);flex-wrap:wrap}
+nav button{background:none;border:0;color:var(--dim);font:inherit;font-weight:600;padding:10px 16px;cursor:pointer;border-bottom:3px solid transparent}
+nav button.on{color:var(--text);border-color:var(--accent)}
+main{padding:22px 28px 60px;max-width:1500px;margin:0 auto}
+.tab{display:none}.tab.on{display:block}
+.layout{display:grid;grid-template-columns:270px 1fr;gap:22px}
+@media(max-width:900px){.layout{grid-template-columns:1fr}}
+.side{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px;align-self:start;position:sticky;top:12px}
+.side h4{margin:8px 8px 6px;font-size:.75rem;text-transform:uppercase;letter-spacing:.08em;color:var(--dim)}
+.task{display:block;width:100%;text-align:left;background:none;border:0;color:var(--text);font:inherit;font-size:.9rem;padding:7px 10px;border-radius:8px;cursor:pointer}
+.task:hover{background:var(--panel2)}
+.task.on{background:var(--accentbg);color:var(--accent);font-weight:600}
+.task .star{color:var(--warn)}
+.brief{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:16px 20px;margin-bottom:16px}
+.brief .k{font-size:.75rem;text-transform:uppercase;letter-spacing:.08em;color:var(--dim)}
+.brief p{margin:4px 0 0;font-size:1.1rem}
+.steps{display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap}
+.stepbtn{flex:1;min-width:210px;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px 16px;color:var(--text);font:inherit;text-align:left;cursor:pointer}
+.stepbtn:hover:not(:disabled){border-color:var(--accent)}
+.stepbtn:disabled{opacity:.45;cursor:default}
+.stepbtn .n{font-size:.75rem;color:var(--dim);text-transform:uppercase;letter-spacing:.08em}
+.stepbtn .t{font-weight:700;font-size:1.05rem}
+.stepbtn.done{border-color:var(--ok)}
+.stepbtn.next{border-color:var(--accent);box-shadow:0 0 0 3px var(--accentbg)}
+.sec{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:16px 20px;margin-bottom:16px;display:none;animation:in .35s ease}
+.sec.show{display:block}
+@keyframes in{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.sec h3{margin:0 0 10px;font-size:1.15rem;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.badge{font-size:.7rem;font-weight:700;letter-spacing:.06em;padding:2px 8px;border-radius:99px;text-transform:uppercase}
+.badge.live{background:var(--okbg);color:var(--ok)}
+.badge.rec{background:var(--warnbg);color:var(--warn)}
+.cols{display:grid;grid-template-columns:repeat(auto-fit,minmax(380px,1fr));gap:14px}
+.card{background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:12px 14px;min-width:0}
+.card h5{margin:0 0 8px;font-size:.95rem}
+.card h5 small{color:var(--dim);font-weight:400}
+pre.code{margin:0;font-family:var(--mono);font-size:.82rem;overflow:auto;background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:8px 0;max-height:360px}
+.ln{display:flex;white-space:pre;padding:0 10px}
+.ln i{font-style:normal;color:var(--dim);width:2.2em;flex:none;user-select:none}
+.ln.bad{background:var(--badbg);box-shadow:inset 3px 0 var(--bad)}
+.ln.add{background:var(--okbg);box-shadow:inset 3px 0 var(--ok)}
+.ln.del{background:var(--badbg);box-shadow:inset 3px 0 var(--bad)}
+.ln.ctx{color:var(--dim)}
+.res{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;align-items:center}
+.chip{font-size:.8rem;font-weight:700;padding:3px 10px;border-radius:8px}
+.chip.ok{background:var(--okbg);color:var(--ok)}
+.chip.bad{background:var(--badbg);color:var(--bad)}
+.chip.dim{background:var(--panel);color:var(--dim);border:1px solid var(--line);font-weight:500}
+.err{font-family:var(--mono);font-size:.78rem;color:var(--bad);margin-top:8px;word-break:break-word}
+.note{color:var(--dim);font-size:.85rem;margin-top:8px}
+.pipe{display:flex;gap:6px;margin:6px 0 14px;flex-wrap:wrap}
+.stage{flex:1;min-width:130px;border:1px solid var(--line);border-radius:10px;padding:8px 12px;background:var(--panel2);opacity:.5;transition:all .3s}
+.stage .a{font-weight:700}
+.stage .b{font-size:.75rem;color:var(--dim)}
+.stage.active{opacity:1;border-color:var(--accent);background:var(--accentbg);transform:translateY(-2px)}
+.stage.done{opacity:1;border-color:var(--ok)}
+.stage.done .a::after{content:" ✓";color:var(--ok)}
+.finding{background:var(--warnbg);border-left:4px solid var(--warn);border-radius:6px;padding:8px 12px;margin:6px 0;font-family:var(--mono);font-size:.8rem;word-break:break-word}
+.finding b{color:var(--warn)}
+.finding .inst{color:var(--ok)}
+.evidence{background:var(--accentbg);border:1px solid var(--accent);border-radius:8px;padding:10px 12px;font-family:var(--mono);font-size:.78rem;white-space:pre-wrap;word-break:break-word;max-height:200px;overflow:auto}
+.big{font-size:2.4rem;font-weight:800;line-height:1}
+.bars{display:grid;gap:14px;margin-top:10px}
+.bar{display:grid;grid-template-columns:230px 1fr 70px;gap:12px;align-items:center}
+@media(max-width:700px){.bar{grid-template-columns:1fr}}
+.bar .track{height:30px;background:var(--panel2);border-radius:8px;overflow:hidden;border:1px solid var(--line)}
+.bar .fill{height:100%;width:0;transition:width 1s cubic-bezier(.2,.8,.2,1);display:flex;align-items:center;padding-left:10px;font-weight:700;font-size:.85rem;color:#fff}
+.bar .v{font-weight:800;font-size:1.3rem;text-align:right}
+.btn{background:var(--accent);color:#fff;border:0;border-radius:10px;padding:10px 18px;font:inherit;font-weight:700;cursor:pointer}
+.btn:disabled{opacity:.5;cursor:default}
+.btn.ghost{background:var(--panel2);color:var(--text);border:1px solid var(--line)}
+select{background:var(--panel);color:var(--text);border:1px solid var(--line);border-radius:8px;padding:8px 10px;font:inherit}
+.spin{display:inline-block;width:14px;height:14px;border:2px solid var(--line);border-top-color:var(--accent);border-radius:50%;animation:sp .7s linear infinite;vertical-align:-2px;margin-right:6px}
+@keyframes sp{to{transform:rotate(360deg)}}
+.kbd{font-family:var(--mono);font-size:.75rem;border:1px solid var(--line);border-radius:5px;padding:1px 6px;color:var(--dim)}
+.hero{font-size:1.15rem;max-width:62ch}
+.limits li{margin:4px 0}
+</style>
+</head>
+<body>
+<header>
+  <div class="logo">Pin<b>Point</b></div>
+  <div class="tag">Ask the installed library, not the documentation.</div>
+  <div class="spacer"></div>
+  <span class="tag"><span class="badge live">live</span> runs when you click &nbsp; <span class="badge rec">recorded</span> stored model text</span>
+  <button class="btn ghost" id="theme" title="toggle theme">◐</button>
+</header>
+<nav id="tabs">
+  <button data-t="demo" class="on">1 · Live demo (private SDK)</button>
+  <button data-t="score">2 · Scoreboard (24 tasks, live)</button>
+  <button data-t="real">3 · Real libraries</button>
+  <button data-t="limits">4 · What it cannot do</button>
+</nav>
+<main>
+
+<!-- ============ TAB 1 ============ -->
+<section id="demo" class="tab on">
+  <div class="layout">
+    <aside class="side" id="side"></aside>
+    <div>
+      <div class="brief"><span class="k">The task given to the AI</span><p id="desc">Loading…</p>
+        <div class="note">Library: <b>halyard 2.3.0</b>, an SDK we invented. No model has seen it and no docs exist online. &nbsp; <span class="kbd">→</span> or <span class="kbd">Space</span> = next step</div></div>
+      <div class="steps">
+        <button class="stepbtn" id="b1"><div class="n">Step 1</div><div class="t">The problem</div></button>
+        <button class="stepbtn" id="b2"><div class="n">Step 2</div><div class="t">The usual fixes</div></button>
+        <button class="stepbtn" id="b3"><div class="n">Step 3</div><div class="t">PinPoint</div></button>
+      </div>
+
+      <div class="sec" id="s1">
+        <h3>The AI writes code for a library it has never seen <span class="badge live">live run</span></h3>
+        <div id="s1body"></div>
+      </div>
+
+      <div class="sec" id="s2">
+        <h3>The usual fixes <span class="badge live">live run</span> <span class="badge rec">AI's rewrite recorded</span></h3>
+        <div class="cols" id="s2body"></div>
+      </div>
+
+      <div class="sec" id="s3">
+        <h3>PinPoint asks the installed package <span class="badge live">live check</span> <span class="badge live">live tests</span> <span class="badge rec">AI's rewrite recorded</span></h3>
+        <div class="pipe" id="pipe">
+          <div class="stage" data-i="0"><div class="a">Resolve</div><div class="b">read the code (AST)</div></div>
+          <div class="stage" data-i="1"><div class="a">Probe</div><div class="b">ask installed halyard</div></div>
+          <div class="stage" data-i="2"><div class="a">Diff</div><div class="b">use vs reality</div></div>
+          <div class="stage" data-i="3"><div class="a">Repair</div><div class="b">AI gets the facts</div></div>
+          <div class="stage" data-i="4"><div class="a">Verify</div><div class="b">re-check + run tests</div></div>
+        </div>
+        <div id="s3body"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ TAB 2 ============ -->
+<section id="score" class="tab">
+  <p class="hero">Same 24 held-out tasks, same model (gpt-4.1-mini). Click and the page checks and runs <b>all 96 stored answers right now</b> against the real hidden tests.
+    The tasks were written after the PinPoint code was frozen, and hidden tests are never used inside any repair loop.</p>
+  <p><button class="btn" id="runscore">Run all 96 checks live</button> <span id="scorestat" class="note"></span></p>
+  <div class="bars" id="bars"></div>
+  <p class="note" id="scorenote"></p>
+</section>
+
+<!-- ============ TAB 3 ============ -->
+<section id="real" class="tab">
+  <div class="sec show">
+    <h3>On this machine, right now <span class="badge live">live</span></h3>
+    <p class="note">An assistant wrote this for older <code>packaging</code>. PinPoint asks the copy installed here.</p>
+    <p><button class="btn" id="runmachine">Check against this machine</button> <span id="mstat" class="note"></span></p>
+    <div id="mbody"></div>
+  </div>
+  <div class="sec show">
+    <h3>Real benchmark failures (GitChameleon 2.0) <span class="badge rec">recorded from the Docker runs</span></h3>
+    <p class="note">These need the pinned old library versions (run in Docker during the evaluation), so this part replays the stored runs. The model's first answer failed the hidden tests; the finding came from the pinned package; the repaired code passed.</p>
+    <p><select id="gcsel"></select></p>
+    <div id="gcbody"></div>
+  </div>
+</section>
+
+<!-- ============ TAB 4 ============ -->
+<section id="limits" class="tab">
+  <div class="sec show">
+    <h3>Honest limits</h3>
+    <ul class="limits">
+      <li>It sees only <b>name and signature errors</b>: about <b>16%</b> of failing answers on GitChameleon. The other ~84% are logic errors.</li>
+      <li>Gains are small but consistent: <b>+4.2</b> over plain generation, <b>+2.6</b> over self-debug (just under the 3-point bar we set), 0 problems broken.</li>
+      <li>One model family on the main benchmark, one invented SDK. The second model confirms the SDK result and is inconclusive on GitChameleon.</li>
+      <li>It guarantees the code is <i>callable</i> on the installed version, not that it means what you intended. Repair prints a diff; writing is opt-in.</li>
+      <li>Where good docs exist they still win (22/24 vs 9/24). PinPoint matters when docs are missing, stale or for the wrong version.</li>
+      <li>The probe imports the target libraries, which runs their import-time code. Use it only on environments you trust.</li>
+    </ul>
+    <p class="note">Full numbers and caveats: docs/03-eval-plan.md</p>
+  </div>
+</section>
+</main>
+
+<script>
+const $ = s => document.querySelector(s), $$ = s => [...document.querySelectorAll(s)];
+const esc = s => String(s).replace(/[&<>]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
+const sleep = ms => new Promise(r => setTimeout(r, ms));
+async function j(u){ const r = await fetch(u); const d = await r.json(); if (d.error) throw new Error(d.error); return d; }
+
+// ---- theme + tabs ----
+$('#theme').onclick = () => {
+  const root = document.documentElement;
+  const dark = getComputedStyle(root).getPropertyValue('--bg').trim() === '#0d1117';
+  root.dataset.theme = dark ? 'light' : 'dark';
+};
+$$('#tabs button').forEach(b => b.onclick = () => {
+  $$('#tabs button').forEach(x => x.classList.toggle('on', x === b));
+  $$('.tab').forEach(t => t.classList.toggle('on', t.id === b.dataset.t));
+});
+
+// ---- rendering helpers ----
+function codeBlock(code, bad = []) {
+  return '<pre class="code">' + code.split('\n').map((l, i) =>
+    `<div class="ln${bad.includes(i + 1) ? ' bad' : ''}"><i>${i + 1}</i>${esc(l) || ' '}</div>`).join('') + '</pre>';
+}
+function diffBlock(d) {
+  return '<pre class="code">' + d.split('\n').map(l => {
+    const c = l.startsWith('+') ? 'add' : l.startsWith('-') ? 'del' : 'ctx';
+    return `<div class="ln ${c}">${esc(l) || ' '}</div>`;
+  }).join('') + '</pre>';
+}
+const chip = (ok, label) => `<span class="chip ${ok ? 'ok' : 'bad'}">${label}: ${ok ? 'PASS' : 'FAIL'}</span>`;
+function results(r) {
+  const err = !r.hidden.ok ? r.hidden.msg : (!r.visible.ok ? r.visible.msg : '');
+  return `<div class="res">${chip(r.visible.ok, 'visible test')}${chip(r.hidden.ok, 'hidden test')}
+    <span class="chip dim">ran in ${r.visible.ms + r.hidden.ms} ms</span></div>` + (err ? `<div class="err">${esc(err)}</div>` : '');
+}
+function findingHTML(f) {
+  const m = f.text.match(/^(.*?)( Installed: .*)$/s);
+  return `<div class="finding">${m ? esc(m[1]) + '<span class="inst">' + esc(m[2]) + '</span>' : esc(f.text)}</div>`;
+}
+
+// ---- tab 1: live demo ----
+let tasks = [], cur = null, cache = {}, step = 0, busy = false;
+async function loadTasks() {
+  tasks = await j('/api/tasks');
+  const feat = tasks.filter(t => t.featured), rest = tasks.filter(t => !t.featured);
+  const item = t => `<button class="task" data-id="${t.id}">${t.featured ? '<span class="star">★</span> ' : ''}${esc(t.stem)}</button>`;
+  $('#side').innerHTML = '<h4>Good stories</h4>' + feat.map(item).join('') + '<h4>All other tasks</h4>' + rest.map(item).join('');
+  $$('.task').forEach(b => b.onclick = () => pick(+b.dataset.id));
+  pick(feat[0].id);
+}
+function pick(id) {
+  cur = tasks.find(t => t.id === id); cache = {}; step = 0;
+  $$('.task').forEach(b => b.classList.toggle('on', +b.dataset.id === id));
+  $('#desc').textContent = cur.desc;
+  $$('.sec').forEach(s => { if (s.id.startsWith('s')) s.classList.remove('show'); });
+  $$('.stage').forEach(s => s.className = 'stage');
+  updateButtons();
+}
+function updateButtons() {
+  [1, 2, 3].forEach(n => {
+    const b = $('#b' + n);
+    b.disabled = busy || n > step + 1;
+    b.classList.toggle('done', n <= step);
+    b.classList.toggle('next', n === step + 1 && !busy);
+  });
+}
+async function run(tid, arm) { const k = tid + arm; return cache[k] ||= await j(`/api/run/${tid}/${arm}`); }
+
+async function step1() {
+  const r = await run(cur.id, 'none');
+  $('#s1body').innerHTML = `<div class="card"><h5>What the AI wrote <small>(no help; first attempt)</small></h5>${codeBlock(r.code)}${results(r)}
+    <div class="note">Real run against the real <code>halyard</code> package. The AI guessed names that sound right.</div></div>`;
+  $('#s1').classList.add('show');
+}
+async function step2() {
+  const [sd, dc] = await Promise.all([run(cur.id, 'selfdebug'), run(cur.id, 'docs')]);
+  $('#s2body').innerHTML =
+    `<div class="card"><h5>Self-debug <small>the AI sees its own error and tries again</small></h5>${codeBlock(sd.code)}${results(sd)}
+       <div class="note">It sees only the crash message, so it guesses a new name.</div></div>
+     <div class="card"><h5>Written docs <small>upper bound: someone must write them</small></h5>${codeBlock(dc.code)}${results(dc)}
+       <div class="note">Works, but a private SDK has no docs unless you write and maintain them by hand.</div></div>`;
+  $('#s2').classList.add('show');
+}
+async function step3() {
+  const none = await run(cur.id, 'none');
+  const stages = $$('.stage'); stages.forEach(s => s.className = 'stage');
+  $('#s3body').innerHTML = '';
+  $('#s3').classList.add('show');
+  const pp = run(cur.id, 'pinpoint');
+  const diffp = j('/api/diff/' + cur.id);
+  const say = async (i, ms) => { stages[i].classList.add('active'); await sleep(ms); stages[i].classList.replace('active', 'done'); };
+  let html = '';
+  await say(0, 450);
+  html += `<div class="note">Parsed the code without running it. Found the library calls it makes.</div>`;
+  $('#s3body').innerHTML = html;
+  await say(1, 450);
+  html += `<div class="note">Asked the installed package (introspection) in <b>${none.check_ms} ms</b>. No docs, no network.</div>`;
+  $('#s3body').innerHTML = html;
+  await say(2, 450);
+  html += '<h5 style="margin:12px 0 4px">Findings</h5>' + (none.findings.length ? none.findings.map(findingHTML).join('') : '<div class="note">none</div>');
+  html += '<div style="margin-top:8px">' + codeBlock(none.code, none.findings.map(f => f.line)) + '</div>';
+  $('#s3body').innerHTML = html;
+  await say(3, 450);
+  html += `<h5 style="margin:14px 0 4px">What the AI is told <small class="note">(facts from the installed package, not docs)</small></h5><div class="evidence">${esc(none.evidence)}</div>`;
+  $('#s3body').innerHTML = html;
+  const [r, d] = await Promise.all([pp, diffp]);
+  await say(4, 500);
+  html += `<h5 style="margin:14px 0 4px">Repair <small class="note">(recorded rewrite)</small></h5>${diffBlock(d)}
+    <h5 style="margin:14px 0 4px">Verify <small class="note">(live)</small></h5>
+    <div class="res"><span class="chip ${r.findings.length ? 'bad' : 'ok'}">PinPoint re-check: ${r.findings.length} finding(s)</span>${chip(r.visible.ok, 'visible test')}${chip(r.hidden.ok, 'hidden test')}</div>`
+    + (!r.hidden.ok ? `<div class="err">${esc(r.hidden.msg)}</div><div class="note">Honest case: PinPoint made the code callable, but the logic is still wrong. This is the ceiling.</div>` : '');
+  $('#s3body').innerHTML = html;
+}
+async function advance(n) {
+  if (busy || !cur || n !== step + 1) return;
+  busy = true; updateButtons();
+  try { await [step1, step2, step3][n - 1](); step = n; }
+  catch (e) { alert('Demo error: ' + e.message); }
+  busy = false; updateButtons();
+}
+[1, 2, 3].forEach(n => $('#b' + n).onclick = () => advance(n));
+document.addEventListener('keydown', e => {
+  if (!$('#demo').classList.contains('on') || e.target.tagName === 'SELECT') return;
+  if (e.key === 'ArrowRight' || e.key === ' ') { e.preventDefault(); advance(step + 1); }
+  if (e.key === 'ArrowLeft') pick(cur.id);
+});
+
+// ---- tab 2: scoreboard ----
+const ARMS = [['none', 'No help', 'var(--bad)'], ['selfdebug', 'Self-debug (sees the error)', 'var(--warn)'],
+              ['pinpoint', 'PinPoint', 'var(--accent)'], ['docs', 'Hand-written docs (upper bound)', 'var(--ok)']];
+function drawBars(counts, total) {
+  $('#bars').innerHTML = ARMS.map(([k, label, col]) =>
+    `<div class="bar"><div>${label}</div><div class="track"><div class="fill" id="f-${k}" style="background:${col}"></div></div><div class="v" id="v-${k}">–</div></div>`).join('');
+  requestAnimationFrame(() => ARMS.forEach(([k]) => {
+    $('#f-' + k).style.width = (counts[k] / total * 100) + '%';
+    $('#v-' + k).textContent = counts[k] + '/' + total;
+  }));
+}
+$('#runscore').onclick = async () => {
+  const b = $('#runscore'); b.disabled = true;
+  $('#scorestat').innerHTML = '<span class="spin"></span>checking and running 96 answers…';
+  const t0 = performance.now();
+  try {
+    const d = await j('/api/scoreboard');
+    drawBars(d.counts, d.total);
+    $('#scorestat').textContent = `done in ${((performance.now() - t0) / 1000).toFixed(1)} s`;
+    $('#scorenote').textContent = d.mismatch === 0
+      ? 'Every live result matches the stored evaluation run (0 mismatches).'
+      : `Warning: ${d.mismatch} live result(s) differ from the stored run.`;
+  } catch (e) { $('#scorestat').textContent = 'Error: ' + e.message; }
+  b.disabled = false;
+};
+
+// ---- tab 3: real libraries ----
+$('#runmachine').onclick = async () => {
+  $('#mstat').innerHTML = '<span class="spin"></span>probing…';
+  try {
+    const d = await j('/api/machine');
+    $('#mstat').textContent = `installed here: ` + Object.entries(d.versions).map(([k, v]) => `${k} ${v}`).join(', ') + ` · ${d.ms} ms`;
+    $('#mbody').innerHTML = codeBlock(d.code, d.findings.map(f => f.line)) + d.findings.map(findingHTML).join('')
+      + '<div class="note"><code>LegacyVersion</code> was removed in packaging 22. Nothing read any docs.</div>';
+  } catch (e) { $('#mstat').textContent = 'Error: ' + e.message; }
+};
+async function loadGC() {
+  const gc = await j('/api/gc');
+  $('#gcsel').innerHTML = gc.map((c, i) => `<option value="${i}">#${c.id} · ${c.library} ${c.version} · ${c.kinds.join(', ')}</option>`).join('');
+  const show = () => {
+    const c = gc[$('#gcsel').value];
+    const lines = c.findings.map(f => +(f.match(/line (\d+)/) || [])[1]);
+    const d = [...unified(c.before, c.after)].join('\n');
+    $('#gcbody').innerHTML = `<div class="note">${esc(c.problem.trim().slice(0, 300))}</div>
+      <div class="cols" style="margin-top:10px"><div class="card"><h5>Model's first answer <span class="chip bad">hidden tests: FAIL</span></h5>${codeBlock(c.before, lines)}</div>
+      <div class="card"><h5>Finding from the pinned ${esc(c.library)} ${esc(c.version)}</h5>${c.findings.map(f => findingHTML({text: f})).join('')}
+      <h5 style="margin-top:12px">Repair <span class="chip ${c.hidden_after ? 'ok' : 'bad'}">hidden tests: ${c.hidden_after ? 'PASS' : 'FAIL'}</span></h5>${diffBlock(d)}</div></div>`;
+  };
+  $('#gcsel').onchange = show; show();
+}
+// tiny line diff (LCS) for the recorded cases
+function* unified(a, b) {
+  a = a.split('\n'); b = b.split('\n');
+  const n = a.length, m = b.length, L = Array.from({length: n + 1}, () => new Array(m + 1).fill(0));
+  for (let i = n - 1; i >= 0; i--) for (let k = m - 1; k >= 0; k--) L[i][k] = a[i] === b[k] ? L[i + 1][k + 1] + 1 : Math.max(L[i + 1][k], L[i][k + 1]);
+  let i = 0, k = 0;
+  while (i < n && k < m) {
+    if (a[i] === b[k]) { yield '  ' + a[i]; i++; k++; }
+    else if (L[i + 1][k] >= L[i][k + 1]) yield '- ' + a[i++];
+    else yield '+ ' + b[k++];
+  }
+  while (i < n) yield '- ' + a[i++];
+  while (k < m) yield '+ ' + b[k++];
+}
+
+loadTasks().then(async () => {   // http://127.0.0.1:8765/#play auto-runs the three steps (for recording a fallback video)
+  if (location.hash.includes('play')) for (const n of [1, 2, 3]) { await advance(n); await sleep(600); }
+  if (location.hash.includes('score')) { $$('#tabs button')[1].click(); $('#runscore').click(); }
+  if (location.hash.includes('real')) { $$('#tabs button')[2].click(); $('#runmachine').click(); }
+}).catch(e => $('#desc').textContent = 'Could not load: ' + e.message);
+loadGC().catch(() => {});
+</script>
+</body>
+</html>

@@ -13,11 +13,12 @@ by introspection, not documentation — and repairs it before delivery.
 | File | Read it when |
 |---|---|
 | `docs/05-project-story.md` | Start of every session. The whole story + current status |
-| `docs/00-brief.md` | Now, and whenever scope is in question |
-| `docs/01-related-work.md` | Week 1. What's taken, what's open, the positioning paragraph, scoop log |
-| `docs/02-system-design.md` | Weeks 2–8, while building |
-| `docs/03-eval-plan.md` | Weeks 3–10. Baselines, metrics, cost plan |
-| `docs/04-timeline-and-slides.md` | Weekly. Milestones and the 5-slide map |
+| `docs/00-brief.md` | Whenever scope is in question: problem, thesis, claims, kill criteria |
+| `docs/01-related-work.md` | What's taken, what's open, the positioning paragraph, scoop log |
+| `docs/02-system-design.md` | The pipeline and the probe design |
+| `docs/03-eval-plan.md` | **All results and caveats**: baselines, seeds, held-out SDK, ablation, second model |
+| `docs/04-timeline-and-slides.md` | Milestones, the 5-slide map and the demo script |
+| `docs/06-roadmap-to-defense.md` | The claims, the evidence for each, and the defence checklist |
 
 ## The 30-second version
 
@@ -78,22 +79,39 @@ Acts: (1) live check of a real installed library; (2) four real GitChameleon fai
 from the pinned package, the fix and the hidden-test result; (3) the invented `halyard` SDK: crash -> findings -> the exact
 evidence the model sees -> repair -> the code runs; (4) a bug PinPoint cannot see; (5) the numbers.
 
+### Web demo (local, no extra dependencies)
+
+```powershell
+.venv\Scripts\python demo\web\server.py      # then open http://127.0.0.1:8765
+```
+
+Pick one of the 24 held-out `halyard` tasks and step through (right arrow or Space): the model's code is run for real
+and fails, the usual fixes (self-debug, written docs) are shown, then PinPoint's five stages run with real findings, the
+facts the model is told, the diff and a live re-check. The **Scoreboard** tab re-executes all 96 stored answers
+(2 / 3 / 9 / 22 of 24, "0 mismatches" against the stored evaluation) in about 20 seconds; **Real libraries** checks a
+file against the packages installed on this machine. Everything marked *live* is executed when you click; only the
+model's rewritten text is replayed from the stored runs, so no network or API key is needed. Binds to 127.0.0.1 only.
+Open `http://127.0.0.1:8765/#play` to auto-run the three steps.
+
 ## Results (details and caveats: `docs/03-eval-plan.md`)
 
 GitChameleon 2.0, gpt-4.1-mini, 328 problems, 3 seeds, hidden tests, paired bootstrap 95% CI:
 PinPoint over plain generation **+4.2 pts [+2.3, +6.2]**; over self-debug **+2.6 pts [+1.2, +4.4]**; it broke 0 problems.
-Only ~16% of failures are visible to introspection; the rest are logic errors it cannot see.
+Only ~16% of failures are visible to introspection; the rest are logic errors it cannot see. The gain over self-debug is
+just under the 3-point bar set in advance, and introspection did **not** narrow the visible-hidden gap that
+self-debugging widens (reported as a negative result).
 On an invented private SDK (24 held-out tasks, code frozen first): no help 2/24, PinPoint 9/24, written docs 22/24 -
 roughly half of what docs give when none exist. The ablation shows the key ingredient is listing what the installed
 object really exposes. One model family; second model confirms the SDK result, inconclusive on GitChameleon.
 
-## Status (2026-10-30)
+## Status (2026-11-03)
 
 - [x] Baselines reproduced (A1 47.9 vs published 44.2; A3 55.8 vs 68, gap explained in the eval plan)
 - [x] Probe, diff, repair loop built and validated (0 false alarms on reference solutions)
 - [x] GitChameleon A4/A5, 3 seeds; private-SDK case study with held-out tasks; ablation; second model
-- [x] `pinpoint check` / `pinpoint repair` CLI
-- [ ] Write-up and 5 slides
+- [x] `pinpoint check` / `pinpoint repair` CLI (43 tests)
+- [x] Terminal demo and local web demo
+- [x] Write-up and 5-slide presentation prepared (kept outside this repository for now)
 
 ## Budget
 

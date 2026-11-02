@@ -12,3 +12,6 @@ data/cache/
 papers/
 external/
 .claude/settings.local.json
+
+# personal notes, kept locally only
+docs/notes@abhi_pinpoint
